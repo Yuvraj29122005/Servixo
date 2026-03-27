@@ -40,9 +40,9 @@ const LandingPage = () => {
   const steps = [
     { id: 'RECEIVED', label: 'Received', completed: true },
     { id: 'INSPECTION', label: 'Inspection', completed: true },
-    { id: 'REPAIRING', label: 'Repairing', completed: true, current: true },
-    { id: 'QUALITY_CHECK', label: 'Quality Check', completed: false },
-    { id: 'READY', label: 'Ready', completed: false },
+    { id: 'REPAIRING', label: 'Repairing', completed: true },
+    { id: 'QUALITY_CHECK', label: 'Quality Check', completed: true },
+    { id: 'READY', label: 'Ready', completed: true, current: true },
     { id: 'PAYMENT', label: 'Payment', completed: false },
     { id: 'DELIVERED', label: 'Delivered', completed: false }
   ];
@@ -157,7 +157,7 @@ const LandingPage = () => {
                     <h3 className="cf-vehicle-name">Toyota Camry 2021</h3>
                     <p className="text-muted text-sm">{jobId} • Sarah Connor</p>
                   </div>
-                  <span className="badge badge-repairing">REPAIRING</span>
+                  <span className="badge badge-ready">READY</span>
                 </div>
 
                 {/* Status Stepper */}
