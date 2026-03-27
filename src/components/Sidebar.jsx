@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge, Car, CreditCard } from 'lucide-react';
 import './Sidebar.css';
+import logo from '../assets/logo.png';
 
 const Sidebar = ({ role }) => {
   const navigate = useNavigate();
@@ -50,7 +51,8 @@ const Sidebar = ({ role }) => {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-        <span style={{ color: '#16a34a' }}><Wrench /></span> Servixo
+        <img src={logo} alt="Servixo" className="sidebar-logo-img" />
+        <span className="sidebar-brand-text">Servixo</span>
       </div>
 
       <nav className="sidebar-nav">

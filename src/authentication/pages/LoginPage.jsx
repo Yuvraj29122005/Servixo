@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Wrench, ArrowLeft, X } from 'lucide-react';
 import '../css/LoginPage.css';
+import logo from '../../assets/logo.png';
 
 const LoginPage = () => {
   const [role, setRole] = useState('admin'); // 'admin' or 'mechanic'
@@ -35,8 +36,8 @@ const LoginPage = () => {
     <div className="login-page">
       <div className="login-card card">
         <div className="login-header">
-          <div className="logo-icon mb-4 justify-center" style={{ fontSize: '2rem' }}>
-            <Wrench size={32} />
+          <div className="login-logo-container mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={logo} alt="Servixo" style={{ height: '48px', width: 'auto' }} />
           </div>
           <h2>Welcome Back</h2>
           <p className="text-muted text-sm">Sign in to your Servixo account</p>
