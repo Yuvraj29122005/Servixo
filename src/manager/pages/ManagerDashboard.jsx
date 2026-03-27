@@ -1,38 +1,55 @@
 import React from 'react';
 import { useData } from '../../context/DataContext';
-import { CheckCircle, Users, FileText } from 'lucide-react';
+import { CheckCircle, Users, FileText, Clock } from 'lucide-react';
 
 const ManagerDashboard = () => {
   const { jobs, users, generateCredentials, approveBill } = useData();
 
-  // Mechanics that need credentials
   const pendingMechanics = users.filter(u => u.role === 'mechanic' && !u.credentials);
-
+  
   // Jobs that have bills pending approval
   const pendingBills = jobs.filter(j => j.bill && !j.bill.approved);
   const approvedBills = jobs.filter(j => j.bill && j.bill.approved);
 
   const stats = [
-    { title: 'PENDING CREDENTIALS', value: pendingMechanics.length.toString(), icon: <Users size={24} className="icon-blue" /> },
-    { title: 'BILLS TO APPROVE', value: pendingBills.length.toString(), icon: <FileText size={24} className="icon-orange" /> },
-    { title: 'APPROVED BILLS', value: approvedBills.length.toString(), icon: <CheckCircle size={24} className="icon-green" /> }
+    { title: 'PENDING CREDENTIALS', value: pendingMechanics.length, icon: <Users size={22} className="icon-blue" /> },
+    { title: 'BILLS TO APPROVE', value: pendingBills.length, icon: <Clock size={22} className="icon-orange" /> },
+    { title: 'APPROVED BILLS', value: approvedBills.length, icon: <CheckCircle size={22} className="icon-green" /> }
   ];
 
   return (
-    <div className="manager-dashboard p-6">
-      <div className="flex justify-between items-center mb-6" style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Manager Area</h2>
-      </div>
+    <div className="manager-dashboard" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-      <div className="stats-grid mb-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
         {stats.map((stat, idx) => (
-          <div className="card p-4 flex items-center gap-4" key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-            <div className="p-3 bg-gray-100 rounded-full" style={{ backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '50%' }}>
+          <div
+            key={idx}
+            className="card"
+            style={{
+              padding: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem'
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#f1f5f9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
               {stat.icon}
             </div>
             <div>
-              <div className="text-gray-500 text-sm font-semibold">{stat.title}</div>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#6b7280', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                {stat.title}
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{stat.value}</div>
             </div>
           </div>
         ))}
@@ -54,7 +71,7 @@ const ManagerDashboard = () => {
                     <strong>{mech.name}</strong>
                     <p className="text-sm text-gray-500 text-muted">Awaiting access</p>
                   </div>
-                  <button
+                  <button 
                     className="btn btn-primary btn-sm"
                     onClick={() => generateCredentials(mech.id)}
                   >
@@ -66,20 +83,32 @@ const ManagerDashboard = () => {
           )}
         </div>
 
-        {/* Bill Approvals */}
-        <div className="card">
-          <h3 className="mb-4 text-lg font-semibold flex items-center gap-2" style={{ marginBottom: '1rem' }}>
-            <FileText size={20} /> Pending Bill Approvals
-          </h3>
-          {pendingBills.length === 0 ? (
-            <p className="text-muted">No pending bills to approve.</p>
-          ) : (
-            <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {pendingBills.map(job => (
-                <div key={job.id} className="p-4 border rounded" style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem' }}>
-                  <div className="flex justify-between mb-2" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <strong>{job.id} - {job.vehicle}</strong>
-                    <span className="badge badge-inspection">Pending</span>
+      {/* Pending Bill Approvals */}
+      <div className="card" style={{ padding: '1.5rem' }}>
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.1rem' }}>
+          <FileText size={20} /> Pending Bill Approvals
+        </h3>
+        {pendingBills.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+            <CheckCircle size={32} style={{ marginBottom: '0.5rem', opacity: 0.4 }} />
+            <p>No pending bills to approve.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {pendingBills.map(job => (
+              <div
+                key={job.id}
+                style={{
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px',
+                  borderLeft: '4px solid #f59e0b',
+                  padding: '1.25rem',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <div>
+                    <strong style={{ fontSize: '1rem' }}>{job.vehicle}</strong>
+                    <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: '#6b7280' }}>{job.id}</span>
                   </div>
                   <p className="text-sm text-gray-600 mb-2 text-muted">Mechanic: {job.mechanic}</p>
                   <div className="bg-gray-50 p-2 rounded mb-3" style={{ backgroundColor: '#f9fafb', padding: '0.5rem', borderRadius: '0.25rem', marginBottom: '0.75rem' }}>
@@ -95,7 +124,7 @@ const ManagerDashboard = () => {
                       Total: ${job.bill.subtotal.toFixed(2)}
                     </div>
                   </div>
-                  <button
+                  <button 
                     className="btn btn-primary w-full"
                     onClick={() => approveBill(job.id)}
                   >

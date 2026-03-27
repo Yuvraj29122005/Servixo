@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge } from 'lucide-react';
+import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge, Car, CreditCard } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = ({ role }) => {
@@ -24,21 +24,42 @@ const Sidebar = ({ role }) => {
     { name: 'My Jobs', path: '/mechanic/jobs', icon: <Wrench size={20} /> },
   ];
 
-  const links = role === 'admin' ? adminLinks : mechanicLinks;
+  const managerLinks = [
+    { name: 'Manager Area', path: '/manager', icon: <LayoutDashboard size={20} /> },
+    { name: 'Bill Approvals', path: '/manager/bills', icon: <FileText size={20} /> },
+    { name: 'Credentials', path: '/manager/credentials', icon: <Users size={20} /> },
+  ];
+
+  const customerLinks = [
+    { name: 'My Vehicles', path: '/customer', icon: <Car size={20} /> },
+    { name: 'Payments', path: '/customer/payments', icon: <CreditCard size={20} /> },
+  ];
+
+  const getLinksByRole = () => {
+    switch (role) {
+      case 'admin': return adminLinks;
+      case 'mechanic': return mechanicLinks;
+      case 'manager': return managerLinks;
+      case 'customer': return customerLinks;
+      default: return [];
+    }
+  };
+
+  const links = getLinksByRole();
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}}>
+      <div className="sidebar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
         <span style={{ color: '#16a34a' }}><Wrench /></span> Servixo
       </div>
-      
+
       <nav className="sidebar-nav">
         {links.map((link) => (
           <NavLink
             key={link.name}
             to={link.path}
             className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-            end={link.path === '/admin' || link.path === '/mechanic'}
+            end={link.path === '/admin' || link.path === '/mechanic' || link.path === '/manager' || link.path === '/customer'}
           >
             {link.icon}
             {link.name}

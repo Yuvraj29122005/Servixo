@@ -91,3 +91,70 @@
 
 .mb-6 { margin-bottom: 2rem; }
 .mt-6 { margin-top: 1.5rem; }
+
+/* Forgot Password Modal */
+.forgot-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.forgot-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.forgot-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.forgot-modal-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.forgot-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.forgot-modal-close:hover {
+  color: var(--primary-blue);
+}
+
+.forgot-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.forgot-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}

@@ -1,0 +1,123 @@
+/* ══════════════════════════════════
+   Mechanic Full-Page Layout (No Sidebar)
+   ══════════════════════════════════ */
+
+.mechanic-fullpage-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f1f5f9;
+}
+
+/* ─── Top Bar ─── */
+.mechanic-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.mechanic-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mechanic-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mechanic-brand-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.mechanic-topbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--border-light);
+}
+
+.mechanic-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mechanic-notif-btn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.mechanic-notif-btn:hover {
+  background: var(--bg-main);
+  color: var(--primary-blue);
+}
+
+.mechanic-topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+}
+
+.mechanic-topbar-user:hover {
+  background: var(--bg-main);
+}
+
+.mechanic-topbar-user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.mechanic-topbar-username {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.mechanic-topbar-role {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.mechanic-logout-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.mechanic-logout-btn:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+/* ─── Body ─── */
+.mechanic-fullpage-body {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+}
