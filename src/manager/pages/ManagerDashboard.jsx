@@ -110,28 +110,29 @@ const ManagerDashboard = () => {
                     <strong style={{ fontSize: '1rem' }}>{job.vehicle}</strong>
                     <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: '#6b7280' }}>{job.id}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2 text-muted">Mechanic: {job.mechanic}</p>
-                  <div className="bg-gray-50 p-2 rounded mb-3" style={{ backgroundColor: '#f9fafb', padding: '0.5rem', borderRadius: '0.25rem', marginBottom: '0.75rem' }}>
-                    <ul className="text-sm list-disc list-inside">
-                      {job.bill.items.map((item, i) => (
-                        <li key={i} className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.desc}</span>
-                          <span>${item.price.toFixed(2)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="text-right font-bold mt-2 pt-2 border-t" style={{ borderTop: '1px solid #e5e7eb', marginTop: '0.5rem', paddingTop: '0.5rem', textAlign: 'right' }}>
-                      Total: ${job.bill.subtotal.toFixed(2)}
-                    </div>
-                  </div>
-                  <button 
-                    className="btn btn-primary w-full"
-                    onClick={() => approveBill(job.id)}
-                  >
-                    Approve & Issue Final Bill
-                  </button>
+                  <p className="text-sm text-gray-600 text-muted">Mechanic: {job.mechanic}</p>
                 </div>
-              ))}
+                <div className="bg-gray-50 p-2 rounded mb-3" style={{ backgroundColor: '#f9fafb', padding: '0.5rem', borderRadius: '0.25rem', marginBottom: '0.75rem' }}>
+                  <ul className="text-sm list-disc list-inside">
+                    {job.bill.items.map((item, i) => (
+                      <li key={i} className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{item.desc}</span>
+                        <span>${item.price.toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="text-right font-bold mt-2 pt-2 border-t" style={{ borderTop: '1px solid #e5e7eb', marginTop: '0.5rem', paddingTop: '0.5rem', textAlign: 'right' }}>
+                    Total: ${job.bill.subtotal.toFixed(2)}
+                  </div>
+                </div>
+                <button 
+                  className="btn btn-primary w-full"
+                  onClick={() => approveBill(job.id)}
+                >
+                  Approve & Issue Final Bill
+                </button>
+              </div>
+            ))}
             </div>
           )}
         </div>
