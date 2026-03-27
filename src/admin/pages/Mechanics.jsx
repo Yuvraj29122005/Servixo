@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Phone, Building, Plus, X, Mail, Lock, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Phone, Building, Plus, X, Mail, Lock, Clock, ChevronDown, ChevronUp, Key, Trash2 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import '../css/Mechanics.css';
 
 const Mechanics = () => {
-  const { users, jobs, addMechanic } = useData();
+  const { users, jobs, addMechanic, removeMechanic, updateMechanicProfile } = useData();
   const mechanics = users.filter(u => u.role === 'mechanic');
 
   const [showForm, setShowForm] = useState(false);
@@ -15,6 +15,11 @@ const Mechanics = () => {
 
   // View History State
   const [expandedMech, setExpandedMech] = useState(null);
+
+  // Password Modal State
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [selectedMech, setSelectedMech] = useState(null);
+  const [updatePassword, setUpdatePassword] = useState('');
 
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -46,6 +51,27 @@ const Mechanics = () => {
     setNewEmail('');
     setNewPassword('');
     setShowForm(false);
+  };
+
+  const handleRemove = (id) => {
+    if (window.confirm("Are you sure you want to remove this mechanic?")) {
+      removeMechanic(id);
+    }
+  };
+
+  const openPasswordModal = (mech) => {
+    setSelectedMech(mech);
+    setUpdatePassword('');
+    setShowPasswordForm(true);
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (selectedMech) {
+      updateMechanicProfile(selectedMech.id, { password: updatePassword });
+      setShowPasswordForm(false);
+      setSelectedMech(null);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -114,6 +140,31 @@ const Mechanics = () => {
         </div>
       )}
 
+      {/* Change Password Modal */}
+      {showPasswordForm && (
+        <div className="mech-modal-overlay" onClick={() => setShowPasswordForm(false)}>
+          <div className="mech-modal" onClick={e => e.stopPropagation()}>
+            <div className="mech-modal-header">
+              <h3>Change Password for {selectedMech?.name}</h3>
+              <button type="button" className="mech-modal-close" onClick={() => setShowPasswordForm(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handlePasswordSubmit} className="mech-modal-body">
+              <div className="form-group">
+                <label className="form-label">New Password</label>
+                <div className="mech-input-icon-wrap">
+                  <Lock size={16} className="mech-input-icon" />
+                  <input type="password" className="form-input mech-input-padded" value={updatePassword} onChange={e => setUpdatePassword(e.target.value)} placeholder="Min 8 characters" minLength={8} required />
+                </div>
+              </div>
+              <div className="mech-modal-actions">
+                <button type="button" className="btn btn-outline" onClick={() => setShowPasswordForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Mechanic Cards Grid */}
       <div className="mech-grid">
         {mechanics.map((mech) => {
@@ -125,9 +176,13 @@ const Mechanics = () => {
             <div className="mech-card card" key={mech.id}>
               <div className="mech-card-top">
                 <div className="mech-avatar">{getInitials(mech.name)}</div>
-                <span className={`mech-status-tag ${isAvailable ? 'available' : 'active'}`}>
-                  {isAvailable ? 'Available' : `${activeJobs.length} Active Job${activeJobs.length > 1 ? 's' : ''}`}
-                </span>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <span className={`mech-status-tag ${isAvailable ? 'available' : 'active'}`}>
+                    {isAvailable ? 'Available' : `${activeJobs.length} Active Job${activeJobs.length > 1 ? 's' : ''}`}
+                  </span>
+                  <button type="button" onClick={() => openPasswordModal(mech)} title="Change Password" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280', padding: 0 }}><Key size={16} /></button>
+                  <button type="button" onClick={() => handleRemove(mech.id)} title="Remove Mechanic" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#ef4444', padding: 0 }}><Trash2 size={16} /></button>
+                </div>
               </div>
               <h3 className="mech-name">{mech.name}</h3>
               <div className="mech-detail">

@@ -9,6 +9,7 @@ import JobCards from './admin/pages/JobCards';
 import ServiceWorkflow from './admin/pages/ServiceWorkflow';
 import JobDetail from './admin/pages/JobDetail';
 import Mechanics from './admin/pages/Mechanics';
+import BillManagement from './admin/pages/BillManagement';
 import Reports from './admin/pages/Reports';
 import Settings from './admin/pages/Settings';
 import MechanicDashboard from './mechanic/pages/MechanicDashboard';
@@ -32,6 +33,7 @@ function App() {
         <Route path="workflow" element={<ServiceWorkflow />} />
         <Route path="workflow/:jobId" element={<JobDetail />} />
         <Route path="mechanics" element={<Mechanics />} />
+        <Route path="bills" element={<BillManagement />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
       </Route>

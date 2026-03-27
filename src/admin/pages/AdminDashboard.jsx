@@ -5,11 +5,10 @@ import { useData } from '../../context/DataContext';
 import '../css/AdminDashboard.css';
 
 const AdminDashboard = () => {
-  const { jobs, users, addJob, addMechanic } = useData();
+  const { jobs, users, addJob } = useData();
   const navigate = useNavigate();
 
   const [showJobForm, setShowJobForm] = useState(false);
-  const [showMechanicForm, setShowMechanicForm] = useState(false);
 
   // Job Form State
   const [vehicle, setVehicle] = useState('');
@@ -17,9 +16,6 @@ const AdminDashboard = () => {
   const [mechanicId, setMechanicId] = useState('');
   const [issues, setIssues] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
-
-  // Mechanic Form State
-  const [mechanicName, setMechanicName] = useState('');
 
   const mechanics = users.filter(u => u.role === 'mechanic');
 
@@ -85,19 +81,6 @@ const AdminDashboard = () => {
     setVehicle(''); setCustomer(''); setMechanicId(''); setIssues(''); setDeliveryDate('');
   };
 
-  const handleAddMechanic = (e) => {
-    e.preventDefault();
-    const newMech = {
-      id: `mech-${Date.now()}`,
-      name: mechanicName,
-      role: 'mechanic',
-      credentials: false
-    };
-    addMechanic(newMech);
-    setShowMechanicForm(false);
-    setMechanicName('');
-  };
-
   const getStatusBadge = (status) => {
     switch(status) {
       case 'RECEIVED':
@@ -134,9 +117,6 @@ const AdminDashboard = () => {
       <div className="flex justify-between items-center mb-6" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Overview</h2>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button className="btn btn-primary flex items-center gap-2" onClick={() => setShowMechanicForm(true)}>
-            <UserPlus size={18} /> Add Mechanic
-          </button>
           <button className="btn btn-primary flex items-center gap-2" onClick={() => setShowJobForm(true)}>
             <Plus size={18} /> Create Jobcard
           </button>
@@ -198,20 +178,6 @@ const AdminDashboard = () => {
               <button type="button" className="btn btn-outline" onClick={() => setShowJobForm(false)}>Cancel</button>
               <button type="submit" className="btn btn-primary">Create Job</button>
             </div>
-          </form>
-        </div>
-      )}
-
-      {showMechanicForm && (
-        <div className="card mb-6" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
-          <h3 style={{ marginBottom: '1rem' }}>Add New Mechanic</h3>
-          <form onSubmit={handleAddMechanic} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
-            <div style={{ flex: 1 }}>
-              <label>Mechanic Full Name</label>
-              <input type="text" className="form-input" value={mechanicName} onChange={e => setMechanicName(e.target.value)} required />
-            </div>
-            <button type="button" className="btn btn-outline" onClick={() => setShowMechanicForm(false)}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Add Mechanic</button>
           </form>
         </div>
       )}

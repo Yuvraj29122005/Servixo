@@ -153,8 +153,8 @@ export const DataProvider = ({ children }) => {
       addNotification({
         type: 'info',
         title: `Bill Submitted — ${job.vehicle}`,
-        message: `Mechanic ${job.mechanic} submitted a bill for ${jobId}. Awaiting manager approval.`,
-        target: 'Manager User'
+        message: `Mechanic ${job.mechanic} submitted a bill for ${jobId}. Awaiting admin approval.`,
+        target: 'all'
       });
     }
   };
@@ -184,10 +184,17 @@ export const DataProvider = ({ children }) => {
     setUsers(users.map(u => u.id === userId ? { ...u, ...newProfileData } : u));
   };
 
+  const removeMechanic = (mechanicId) => {
+    setUsers(users.filter(u => u.id !== mechanicId));
+  };
+
   return (
     <DataContext.Provider value={{
-      jobs, users, addJob, updateJobStatus, addMechanic, generateCredentials,
-      sendMessage, submitBill, approveBill, makePayment
+      jobs, users, notifications,
+      addJob, updateJobStatus, addMechanic, generateCredentials,
+      sendMessage, submitBill, approveBill, makePayment,
+      updateMechanicProfile, removeMechanic,
+      addNotification, markNotificationRead, markAllNotificationsRead
     }}>
       {children}
     </DataContext.Provider>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge, Car, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge, Car, CreditCard, Receipt } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = ({ role }) => {
@@ -15,6 +15,7 @@ const Sidebar = ({ role }) => {
     { name: 'Job Cards', path: '/admin/jobs', icon: <FileBadge size={20} /> },
     { name: 'Service Workflow', path: '/admin/workflow', icon: <Wrench size={20} /> },
     { name: 'Mechanics', path: '/admin/mechanics', icon: <Users size={20} /> },
+    { name: 'Bill Management', path: '/admin/bills', icon: <Receipt size={20} /> },
     { name: 'Reports / Analytics', path: '/admin/reports', icon: <FileText size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
   ];
