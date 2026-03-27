@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings, CheckCircle, Clock, Package } from 'lucide-react';
-import './AdminDashboard.css';
+import '../css/AdminDashboard.css';
 
 const AdminDashboard = () => {
   const stats = [

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
+import LandingPage from './home/pages/LandingPage';
+import LoginPage from './authentication/pages/LoginPage';
 import DashboardLayout from './layouts/DashboardLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import MechanicDashboard from './pages/mechanic/MechanicDashboard';
+import AdminDashboard from './admin/pages/AdminDashboard';
+import MechanicDashboard from './mechanic/pages/MechanicDashboard';
 
 function App() {
   return (

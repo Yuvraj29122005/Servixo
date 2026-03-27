@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wrench, ShieldCheck, Clock, Search, Smartphone } from 'lucide-react';
-import './LandingPage.css';
+import '../css/LandingPage.css';
 
 const LandingPage = () => {
   const navigate = useNavigate();

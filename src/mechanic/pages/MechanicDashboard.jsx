@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Briefcase, Calendar, MessageSquare, Wrench } from 'lucide-react';
-import './MechanicDashboard.css';
+import '../css/MechanicDashboard.css';
 
 const MechanicDashboard = () => {
   const [activeTab, setActiveTab] = useState('job-details');

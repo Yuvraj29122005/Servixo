@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Wrench } from 'lucide-react';
-import './LoginPage.css';
+import '../css/LoginPage.css';
 
 const LoginPage = () => {
   const [role, setRole] = useState('admin'); // 'admin' or 'mechanic'
