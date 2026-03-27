@@ -1,0 +1,35 @@
+﻿node : file:///C:/Users/yuvra/Desk
+top/hackathon/Servixo/server/src/m
+iddleware/auth.js:28
+At line:1 char:1
++ node src/index.js 2>&1 | 
+Out-File -Encoding utf8 
+C:\Users\yuvra\Deskt ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : Not 
+   Specified: (file:///C:/User..  
+  .ware/auth.js:28:String) [],    
+ RemoteException
+    + FullyQualifiedErrorId : Nat 
+   iveCommandError
+ 
+import jwt from 'jsonwebtoken';
+^^^^^^^^^^
+
+SyntaxError: Identifier 'jwt' has 
+already been declared
+    at compileSourceTextModule (no
+de:internal/modules/esm/utils:346:
+16)
+    at 
+ModuleLoader.moduleStrategy (node:
+internal/modules/esm/translators:1
+46:18)
+    at #translate (node:internal/m
+odules/esm/loader:497:12)
+    at 
+ModuleLoader.loadAndTranslate (nod
+e:internal/modules/esm/loader:544:
+27)
+
+Node.js v20.19.5

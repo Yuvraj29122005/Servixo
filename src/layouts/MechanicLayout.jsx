@@ -3,11 +3,15 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Wrench, Bell, User, LogOut } from 'lucide-react';
 import './MechanicLayout.css';
 import logo from '../assets/logo.png';
+import { useAuth } from '../data/AuthContext';
 
 const MechanicLayout = ({ title, user }) => {
   const navigate = useNavigate();
+  const { logout, user: authUser } = useAuth();
+  const u = authUser || user;
 
   const handleLogout = () => {
+    logout();
     navigate('/login');
   };
 
@@ -27,7 +31,7 @@ const MechanicLayout = ({ title, user }) => {
           </button>
           <div className="mechanic-topbar-user" onClick={() => navigate('/mechanic/profile')} style={{ cursor: 'pointer' }}>
             <div className="mechanic-topbar-user-info">
-              <span className="mechanic-topbar-username">{user?.name}</span>
+              <span className="mechanic-topbar-username">{u?.name}</span>
               <span className="mechanic-topbar-role">Mechanic</span>
             </div>
             <div className="avatar">

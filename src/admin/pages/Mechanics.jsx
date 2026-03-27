@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Phone, Building, Plus, X, Mail, Lock, Clock, ChevronDown, ChevronUp, Key, Trash2 } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import '../css/Mechanics.css';
 
 const Mechanics = () => {
@@ -118,16 +118,16 @@ const Mechanics = () => {
                 <input type="tel" className="form-input" value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="e.g. +1234567890" required />
               </div>
               <div className="form-group">
-                <label className="form-label">Login Email</label>
+                <label className="form-label">Username</label>
                 <div className="mech-input-icon-wrap">
-                  <Mail size={16} className="mech-input-icon" />
+                  {/* <Mail size={16} className="mech-input-icon" /> */}
                   <input type="email" className="form-input mech-input-padded" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="e.g. john@servixo.com" required />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Login Password</label>
                 <div className="mech-input-icon-wrap">
-                  <Lock size={16} className="mech-input-icon" />
+                  {/* <Lock size={16} className="mech-input-icon" /> */}
                   <input type="password" className="form-input mech-input-padded" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min 8 characters" minLength={8} required />
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Send, Shield, CheckCircle2, Clock, MapPin, Phone, Mail, ChevronRight, Activity, Zap, User, Wrench, FileText, CreditCard, Download, CalendarDays, Car, AlertCircle, CheckCircle } from 'lucide-react';
+import { Search, Send, Shield, CheckCircle2, Clock, MapPin, Phone, Mail, ChevronRight, ChevronDown, Activity, Zap, User, Wrench, FileText, CreditCard, CalendarDays, Car, AlertCircle, CheckCircle } from 'lucide-react';
 import '../css/LandingPage.css';
 import logo from '../../assets/logo.png';
 
@@ -10,6 +10,10 @@ const LandingPage = () => {
   const [jobId, setJobId] = useState('');
   const [mobile, setMobile] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [trackLoading, setTrackLoading] = useState(false);
+  const [trackError, setTrackError] = useState('');
+  const [trackedJob, setTrackedJob] = useState(null);
+  const [billOpen, setBillOpen] = useState(false);
 
   // Appointment form state
   const [apptForm, setApptForm] = useState({
@@ -28,23 +32,39 @@ const LandingPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleTrack = (e) => {
-    e.preventDefault();
-    if (jobId) {
-      setTrackingMode(true);
-    }
-  };
+  // home tracking uses manual input only (no job dropdown)
 
-  const autofillDemo = () => {
-    setJobId('JOB-2024-001');
-    setMobile('555-0101');
+  const handleTrack = async (e) => {
+    e.preventDefault();
+    if (!jobId.trim() || !mobile.trim()) return;
+    setTrackLoading(true);
+    setTrackError('');
+    setTrackedJob(null);
+    try {
+      const params = new URLSearchParams();
+      params.set('phone', mobile.trim());
+      const res = await fetch(
+        `http://localhost:4000/api/jobs/track/${encodeURIComponent(jobId.trim())}?${params.toString()}`
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || 'Tracking failed');
+      setTrackedJob(data);
+      setTrackingMode(true);
+    } catch (err) {
+      setTrackError(err.message || 'Tracking failed');
+    } finally {
+      setTrackLoading(false);
+    }
   };
 
   const resetTracker = () => {
     setTrackingMode(false);
     setJobId('');
     setMobile('');
+    setTrackedJob(null);
+    setTrackError('');
   };
+
 
   // --- Appointment validation ---
   const validateField = (name, value) => {
@@ -144,15 +164,33 @@ const LandingPage = () => {
   // Today's date in YYYY-MM-DD
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const steps = [
-    { id: 'RECEIVED', label: 'Received', completed: true },
-    { id: 'INSPECTION', label: 'Inspection', completed: true },
-    { id: 'REPAIRING', label: 'Repairing', completed: true },
-    { id: 'QUALITY_CHECK', label: 'Quality Check', completed: true },
-    { id: 'READY', label: 'Ready', completed: true, current: true },
-    { id: 'PAYMENT', label: 'Payment', completed: false },
-    { id: 'DELIVERED', label: 'Delivered', completed: false }
+  const baseSteps = [
+    { id: 'RECEIVED', label: 'Received' },
+    { id: 'INSPECTION', label: 'Inspection' },
+    { id: 'REPAIRING', label: 'Repairing' },
+    { id: 'QUALITY_CHECK', label: 'Quality Check' },
+    { id: 'READY', label: 'Ready' },
+    { id: 'PAYMENT', label: 'Payment' },
+    { id: 'DELIVERED', label: 'Delivered' }
   ];
+
+  const computeSteps = () => {
+    const status = trackedJob?.status;
+    const isPaid = Boolean(trackedJob?.bill?.paid);
+    const currentId =
+      status === 'DELIVERED' ? 'DELIVERED'
+        : (status === 'READY' && !isPaid) ? 'PAYMENT'
+          : status || 'RECEIVED';
+
+    const currentIndex = baseSteps.findIndex(s => s.id === currentId);
+    return baseSteps.map((s, idx) => ({
+      ...s,
+      completed: currentIndex > idx,
+      current: currentIndex === idx
+    }));
+  };
+
+  const steps = computeSteps();
 
   const billItems = [
     { name: 'Engine Oil Change', qty: 1, price: 45.00 },
@@ -230,11 +268,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                <div className="cf-demo-bar">
-                  <span className="cf-demo-label"><strong>Demo:</strong> Try job <strong>JOB-2024-001</strong> with mobile <strong>555-0101</strong></span>
-                  <button type="button" className="btn btn-outline cf-autofill-btn" onClick={autofillDemo}>Auto-fill</button>
-                </div>
-
                 <form onSubmit={handleTrack} className="cf-form">
                   <div className="cf-form-row">
                     <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
@@ -249,22 +282,28 @@ const LandingPage = () => {
                       />
                     </div>
                     <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                      <label className="form-label">Mobile Number (Optional)</label>
+                      <label className="form-label">Mobile Number</label>
                       <input
                         type="text"
                         className="form-input"
-                        placeholder="e.g. 555-0101"
+                        placeholder="e.g. 9876543210"
                         value={mobile}
                         onChange={(e) => setMobile(e.target.value)}
+                        required
                       />
                     </div>
                     <div className="cf-form-btn-wrapper">
-                      <button type="submit" className="btn btn-primary cf-track-submit-btn">
+                      <button type="submit" className="btn btn-primary cf-track-submit-btn" disabled={trackLoading}>
                         <Search size={18} />
-                        Track Status
+                        {trackLoading ? 'Tracking...' : 'Track Status'}
                       </button>
                     </div>
                   </div>
+                  {trackError && (
+                    <div className="cf-demo-bar" style={{ marginTop: '0.75rem', background: '#fef2f2', borderColor: '#fecaca' }}>
+                      <span className="cf-demo-label" style={{ color: '#b91c1c' }}>{trackError}</span>
+                    </div>
+                  )}
                 </form>
               </>
             ) : (
@@ -272,10 +311,10 @@ const LandingPage = () => {
                 {/* Vehicle Header */}
                 <div className="cf-results-header">
                   <div>
-                    <h3 className="cf-vehicle-name">Toyota Camry 2021</h3>
-                    <p className="text-muted text-sm">{jobId} • yuvraj dhadhal</p>
+                    <h3 className="cf-vehicle-name">{trackedJob?.vehicle || '—'}</h3>
+                    <p className="text-muted text-sm">{trackedJob?.id || jobId} • {trackedJob?.customer || '—'}</p>
                   </div>
-                  <span className="badge badge-ready">READY</span>
+                  <span className="badge badge-ready">{(trackedJob?.status || '—').toString().replace('_', ' ')}</span>
                 </div>
 
                 {/* Status Stepper */}
@@ -304,7 +343,7 @@ const LandingPage = () => {
                     <div className="cf-info-icon-box green"><CheckCircle2 size={18} /></div>
                     <div>
                       <span className="cf-info-label">Estimated Delivery</span>
-                      <span className="cf-info-value">May 12, 5:00 PM</span>
+                      <span className="cf-info-value">{trackedJob?.delivery || '—'}</span>
                     </div>
                   </div>
                 </div>
@@ -321,13 +360,13 @@ const LandingPage = () => {
                     </div>
                     <div className="cf-mechanic-info">
                       <div className="cf-mechanic-row">
-                        <span className="cf-mechanic-name">prince viradiya</span>
-                        <span className="badge badge-ready" style={{ fontSize: '0.7rem' }}>CERTIFIED</span>
+                        <span className="cf-mechanic-name">{trackedJob?.mechanic || 'Unassigned'}</span>
+                        {trackedJob?.mechanic && trackedJob?.mechanic !== 'Unassigned' && (
+                          <span className="badge badge-ready" style={{ fontSize: '0.7rem' }}>CERTIFIED</span>
+                        )}
                       </div>
-                      <span className="text-muted text-sm">Senior Mechanic • 8 years experience</span>
-                      <div className="cf-mechanic-meta">
-                        <span><Phone size={13} /> +1 (555) 234-5678</span>
-                        <span><Mail size={13} /> alex.j@servixo.com</span>
+                      <div className="cf-mechanic-meta" style={{ marginTop: '0.5rem' }}>
+                        <span><Phone size={13} /> {trackedJob?.mechanicPhone || 'No phone available'}</span>
                       </div>
                     </div>
                   </div>
@@ -339,53 +378,80 @@ const LandingPage = () => {
                     <CreditCard size={18} />
                     Payment & Bill Summary
                   </h4>
-                  <div className="cf-bill-table-wrapper">
-                    <table className="cf-bill-table">
-                      <thead>
-                        <tr>
-                          <th>Service Item</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {billItems.map((item, i) => (
-                          <tr key={i}>
-                            <td>{item.name}</td>
-                            <td>{item.qty}</td>
-                            <td>${item.price.toFixed(2)}</td>
-                            <td>${(item.price * item.qty).toFixed(2)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <div className="card cf-bill-card">
+                    {!trackedJob?.bill ? (
+                      <div className="cf-bill-empty">
+                        <p className="text-muted text-sm">Bill not generated yet.</p>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Total always visible */}
+                        <div className="cf-bill-total-banner">
+                          <div className="cf-bill-total-left">
+                            <span className="cf-bill-total-label">Total Amount</span>
+                            <span className="cf-bill-total-amount">₹{(Number(trackedJob.bill.subtotal || 0) * 1.18).toFixed(2)}</span>
+                          </div>
+                          <span className="cf-bill-items-count">
+                            {trackedJob.bill.items?.length || 1} service{(trackedJob.bill.items?.length || 1) > 1 ? 's' : ''}
+                          </span>
+                        </div>
 
-                  <div className="cf-bill-summary">
-                    <div className="cf-bill-row">
-                      <span>Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="cf-bill-row">
-                      <span>Tax (8%)</span>
-                      <span>${tax.toFixed(2)}</span>
-                    </div>
-                    <div className="cf-bill-row cf-bill-total">
-                      <span>Total Amount</span>
-                      <span>${total.toFixed(2)}</span>
-                    </div>
-                  </div>
+                        {/* Dropdown toggle */}
+                        <button className="cf-bill-dropdown-btn" onClick={() => setBillOpen(!billOpen)}>
+                          <FileText size={16} />
+                          <span>View Itemized Bill</span>
+                          <ChevronDown size={18} className={`cf-bill-chevron ${billOpen ? 'open' : ''}`} />
+                        </button>
 
-                  <div className="cf-payment-actions">
-                    <button className="btn btn-outline cf-download-btn">
-                      <Download size={16} />
-                      Download Bill PDF
-                    </button>
-                    <button className="btn btn-primary cf-pay-btn">
-                      <CreditCard size={16} />
-                      Pay ${total.toFixed(2)}
-                    </button>
+                        {/* Collapsible items */}
+                        <div className={`cf-bill-dropdown-body ${billOpen ? 'open' : ''}`}>
+                          <div className="cf-bill-dropdown-inner">
+                            {/* Items List */}
+                            <div className="cf-bill-items-list">
+                              <div className="cf-bill-items-header">
+                                <span>Service Description</span>
+                                <span>Price</span>
+                              </div>
+                              {trackedJob.bill.items && trackedJob.bill.items.length > 0 ? (
+                                trackedJob.bill.items.map((item, idx) => (
+                                  <div key={idx} className="cf-bill-item-row">
+                                    <div className="cf-bill-item-info">
+                                      <span className="cf-bill-item-num">{idx + 1}.</span>
+                                      <span className="cf-bill-item-name">{item.desc}</span>
+                                    </div>
+                                    <span className="cf-bill-item-price">₹{Number(item.price || 0).toFixed(2)}</span>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="cf-bill-item-row">
+                                  <div className="cf-bill-item-info">
+                                    <span className="cf-bill-item-num">1.</span>
+                                    <span className="cf-bill-item-name">Vehicle Service Charges</span>
+                                  </div>
+                                  <span className="cf-bill-item-price">₹{Number(trackedJob.bill.subtotal || 0).toFixed(2)}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Totals */}
+                            <div className="cf-bill-totals">
+                              <div className="cf-bill-row">
+                                <span>Subtotal</span>
+                                <strong>₹{Number(trackedJob.bill.subtotal || 0).toFixed(2)}</strong>
+                              </div>
+                              <div className="cf-bill-row">
+                                <span>GST (18%)</span>
+                                <strong>₹{(Number(trackedJob.bill.subtotal || 0) * 0.18).toFixed(2)}</strong>
+                              </div>
+                              <div className="cf-bill-row cf-bill-grand-row">
+                                <span>Grand Total</span>
+                                <strong>₹{(Number(trackedJob.bill.subtotal || 0) * 1.18).toFixed(2)}</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -440,7 +506,7 @@ const LandingPage = () => {
         <div className="container cf-footer-inner">
           <div className="cf-footer-brand">
             <div className="cf-footer-logo-row">
-              <div className="cf-footer-logo-bg"><img src={logo} alt="Servixo" /></div>
+
               <span className="cf-footer-name">Servixo</span>
             </div>
             <p className="cf-footer-desc">
@@ -450,9 +516,9 @@ const LandingPage = () => {
           <div className="cf-footer-cols">
             <div className="cf-footer-col">
               <h5 className="cf-footer-heading">Contact Us</h5>
-              <div className="cf-footer-item"><Phone size={14} /><span>+1 (800) 123-4567</span></div>
-              <div className="cf-footer-item"><Mail size={14} /><span>support@servixo.com</span></div>
-              <div className="cf-footer-item"><MapPin size={14} /><span>123 Service Road, Tech District, NY 10001</span></div>
+              <div className="cf-footer-item"><Phone size={14} /><span>+91 8140351044</span></div>
+              <div className="cf-footer-item"><Mail size={14} /><span>yuvrajdhadhal988@gmail.com</span></div>
+              <div className="cf-footer-item"><MapPin size={14} /><span>Rk university,rajkot</span></div>
             </div>
             <div className="cf-footer-col">
               <h5 className="cf-footer-heading">Legal</h5>

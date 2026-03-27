@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, MessageSquare, ExternalLink } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import '../css/ServiceWorkflow.css';
 
 const WORKFLOW_COLUMNS = [

@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Settings as SettingsIcon, Bell, Shield, User } from 'lucide-react';
 import '../css/Settings.css';
+import { useAuth } from '../../data/AuthContext';
 
 const TABS = [
-  { key: 'general', label: 'General Settings', icon: <SettingsIcon size={18} /> },
-  { key: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
   { key: 'security', label: 'Security', icon: <Shield size={18} /> },
   { key: 'profile', label: 'Profile', icon: <User size={18} /> },
 ];
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('security');
   const [saved, setSaved] = useState(false);
+  const { user, token, updateUser } = useAuth();
 
-  // General Settings State
+  const API_BASE = 'http://localhost:4000/api';
+
+  useEffect(() => {
+    const load = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch(`${API_BASE}/settings`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) return;
+        setEmailNotifications(Boolean(data.emailNotifications));
+        setCenterName(data.centerName || 'Servixo Main Branch');
+        setSupportContact(data.supportContact || '');
+        setJobUpdates(Boolean(data.jobUpdates));
+        setMechanicAlerts(Boolean(data.mechanicAlerts));
+        setCustomerMessages(Boolean(data.customerMessages));
+        setDailyReport(Boolean(data.dailyReport));
+        setSessionTimeout(data.sessionTimeout || '30');
+      } catch {
+        // ignore
+      }
+    };
+    load();
+  }, [token]);
+
+  // General Settings State (loaded from backend, fallback defaults)
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [centerName, setCenterName] = useState('Servixo Main Branch');
-  const [supportContact, setSupportContact] = useState('+1 (800) 123-4567');
+  const [supportContact, setSupportContact] = useState('');
 
   // Notifications State
   const [jobUpdates, setJobUpdates] = useState(true);
@@ -28,13 +54,49 @@ const Settings = () => {
   const [sessionTimeout, setSessionTimeout] = useState('30');
 
   // Profile State
-  const [displayName, setDisplayName] = useState('Admin User');
-  const [email, setEmail] = useState('admin@servixo.com');
+  const [displayName, setDisplayName] = useState(user?.name || 'Admin User');
+  const [email, setEmail] = useState(user?.email || 'admin@servixo.com');
   const [role, setRole] = useState('Administrator');
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    try {
+      // Save settings doc (admin only)
+      await fetch(`${API_BASE}/settings`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          emailNotifications,
+          centerName,
+          supportContact,
+          jobUpdates,
+          mechanicAlerts,
+          customerMessages,
+          dailyReport,
+          sessionTimeout
+        })
+      });
+
+      // Save admin display name (updates navbar)
+      if (user?.id && displayName && displayName !== user.name) {
+        const res = await fetch(`${API_BASE}/users/${user.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ name: displayName })
+        });
+        const updated = await res.json();
+        if (res.ok) {
+          updateUser({ name: updated.name });
+        }
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      // ignore
+    }
   };
 
   const renderGeneral = () => (
@@ -94,15 +156,6 @@ const Settings = () => {
     <div className="set-section">
       <h3 className="set-section-title">Security Settings</h3>
       <div className="set-field">
-        <label className="set-field-label">Session Timeout (minutes)</label>
-        <select className="form-input" value={sessionTimeout} onChange={e => setSessionTimeout(e.target.value)}>
-          <option value="15">15 minutes</option>
-          <option value="30">30 minutes</option>
-          <option value="60">1 hour</option>
-          <option value="120">2 hours</option>
-        </select>
-      </div>
-      <div className="set-field">
         <label className="set-field-label">Password</label>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <input type="password" className="form-input" value="••••••••" readOnly style={{ flex: 1 }} />
@@ -136,7 +189,7 @@ const Settings = () => {
       case 'notifications': return renderNotifications();
       case 'security': return renderSecurity();
       case 'profile': return renderProfile();
-      default: return renderGeneral();
+      default: return renderSecurity();
     }
   };
 

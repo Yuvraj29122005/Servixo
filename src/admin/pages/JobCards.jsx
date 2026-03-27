@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, SlidersHorizontal, Calendar, Plus, ChevronRight, X } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { Search, SlidersHorizontal, Calendar, Plus, ChevronRight, X, Trash2 } from 'lucide-react';
+import { useData } from '../../data/DataContext';
 import '../css/JobCards.css';
 
 const STATUS_OPTIONS = ['ALL', 'RECEIVED', 'INSPECTION', 'REPAIRING', 'QUALITY_CHECK', 'READY'];
 
 const JobCards = () => {
-  const { jobs, users, addJob } = useData();
+  const { jobs, users, addJob, deleteJob } = useData();
   const navigate = useNavigate();
   const mechanics = users.filter(u => u.role === 'mechanic');
 
@@ -30,11 +30,15 @@ const JobCards = () => {
   const filteredJobs = jobs
     .filter(job => {
       const q = searchQuery.toLowerCase();
+      const jobId = (job?.id || '').toString();
+      const customer = (job?.customer || '').toString();
+      const vehicle = (job?.vehicle || '').toString();
+      const vehicleNumber = (job?.vehicleNumber || '').toString();
       const matchesSearch =
-        job.id.toLowerCase().includes(q) ||
-        job.customer.toLowerCase().includes(q) ||
-        job.vehicle.toLowerCase().includes(q) ||
-        (job.vehicleNumber && job.vehicleNumber.toLowerCase().includes(q));
+        jobId.toLowerCase().includes(q) ||
+        customer.toLowerCase().includes(q) ||
+        vehicle.toLowerCase().includes(q) ||
+        vehicleNumber.toLowerCase().includes(q);
       const matchesStatus = statusFilter === 'ALL' || job.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
@@ -195,9 +199,24 @@ const JobCards = () => {
                 <td className="jc-mechanic-cell">{job.mechanic}</td>
                 <td className="jc-date-cell">{job.dateCreated || job.date}</td>
                 <td>
-                  <button className="jc-action-btn" aria-label="View details" onClick={() => navigate(`/admin/workflow/${job.id}`)}>
-                    <ChevronRight size={18} />
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <button className="jc-action-btn" aria-label="View details" onClick={() => navigate(`/admin/workflow/${job.id}`)}>
+                      <ChevronRight size={18} />
+                    </button>
+                    <button 
+                      className="jc-action-btn" 
+                      style={{ color: '#ef4444' }} 
+                      aria-label="Delete job" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`Are you sure you want to delete job ${job.id}?`)) {
+                          deleteJob(job.id);
+                        }
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

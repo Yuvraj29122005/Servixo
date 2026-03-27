@@ -390,75 +390,203 @@
   gap: 0.35rem;
 }
 
-/* Payment Section */
-.cf-bill-table-wrapper {
-  overflow-x: auto;
+/* Payment Section — Bill Card */
+.cf-bill-card {
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  margin-top: 0.75rem;
 }
 
-.cf-bill-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
+.cf-bill-empty {
+  padding: 1.5rem;
 }
 
-.cf-bill-table th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  background: var(--bg-card);
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.75rem;
+/* Total Banner — always visible */
+.cf-bill-total-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.cf-bill-total-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cf-bill-total-label {
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border-light);
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  font-weight: 600;
 }
 
-.cf-bill-table td {
-  padding: 0.75rem 1rem;
+.cf-bill-total-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.cf-bill-items-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Dropdown Toggle Button */
+.cf-bill-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: var(--bg-main);
+  border: none;
+  border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  transition: background 0.2s;
+}
+
+.cf-bill-dropdown-btn:hover {
+  background: var(--primary-blue-light);
+}
+
+.cf-bill-dropdown-btn span {
+  flex: 1;
+  text-align: left;
+}
+
+.cf-bill-chevron {
+  transition: transform 0.3s ease;
+}
+
+.cf-bill-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Collapsible Body */
+.cf-bill-dropdown-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.cf-bill-dropdown-body.open {
+  max-height: 600px;
+}
+
+.cf-bill-dropdown-inner {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Item List */
+.cf-bill-items-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.cf-bill-items-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.cf-bill-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--border-light);
+  border-top: none;
+  transition: background 0.15s;
+}
+
+.cf-bill-item-row:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.cf-bill-item-row:hover {
+  background: var(--bg-main);
+}
+
+.cf-bill-item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cf-bill-item-num {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 22px;
+}
+
+.cf-bill-item-name {
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--text-main);
 }
 
-.cf-bill-table tbody tr:last-child td {
-  border-bottom: none;
+.cf-bill-item-price {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
 }
 
-.cf-bill-summary {
-  margin-top: 1rem;
+/* Totals */
+.cf-bill-totals {
   border-top: 1px solid var(--border-light);
-  padding-top: 1rem;
+  padding-top: 0.75rem;
 }
 
 .cf-bill-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.4rem 1rem;
+  padding: 0.45rem 0;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 
-.cf-bill-total {
-  font-size: 1.1rem;
-  font-weight: 700;
+.cf-bill-row strong {
   color: var(--text-main);
+}
+
+.cf-bill-grand-row {
   border-top: 2px solid var(--border-light);
   margin-top: 0.5rem;
   padding-top: 0.75rem;
+  font-size: 1.05rem;
 }
 
-.cf-payment-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+.cf-bill-grand-row span,
+.cf-bill-grand-row strong {
+  font-weight: 800;
+  color: var(--primary-blue);
 }
 
-.cf-download-btn,
-.cf-pay-btn {
-  flex: 1;
-  justify-content: center;
-  padding: 0.75rem;
-  font-size: 0.95rem;
-}
 
 .cf-track-another {
   justify-content: center;

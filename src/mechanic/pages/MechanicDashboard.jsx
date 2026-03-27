@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Car, Wrench, FileText, CheckCircle, Truck } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
+import { useAuth } from '../../data/AuthContext';
 import '../css/MechanicDashboard.css';
 
 const MechanicDashboard = () => {
   const { jobs, updateJobStatus, submitBill, markDelivered } = useData();
+  const { user } = useAuth();
 
-  const mechanicName = 'Alex Johnson';
+  const mechanicName = user?.name || 'Unknown';
 
-  const myJobs = jobs.filter(j => j.mechanic === mechanicName && j.status !== 'DELIVERED');
+  const myJobs = jobs.filter(j => j.mechanic === mechanicName);
 
   const [activeJobId, setActiveJobId] = useState(myJobs.length > 0 ? myJobs[0].id : null);
   const activeJob = myJobs.find(j => j.id === activeJobId);
-
 
   const [billItems, setBillItems] = useState([]);
   const [newItemDesc, setNewItemDesc] = useState('');
@@ -23,7 +24,8 @@ const MechanicDashboard = () => {
     { id: 'INSPECTION', label: 'Inspection', description: 'Checking reported issues' },
     { id: 'REPAIRING', label: 'Repairing', description: 'Repair work in progress' },
     { id: 'QUALITY_CHECK', label: 'Quality Check', description: 'Testing repaired parts' },
-    { id: 'READY', label: 'Ready', description: 'Washed and ready for delivery' }
+    { id: 'READY', label: 'Ready', description: 'Washed and ready for delivery' },
+    { id: 'DELIVERED', label: 'Delivered', description: 'Vehicle returned to customer' }
   ];
 
   const currentStepIndex = activeJob ? steps.findIndex(s => s.id === activeJob.status) : -1;
@@ -70,7 +72,6 @@ const MechanicDashboard = () => {
   const handleMarkDelivered = () => {
     if (activeJob) {
       markDelivered(activeJob.id);
-      setActiveJobId(null);
     }
   };
 
@@ -81,6 +82,7 @@ const MechanicDashboard = () => {
       case 'REPAIRING': return 'badge-repairing';
       case 'QUALITY_CHECK': return 'badge-quality';
       case 'READY': return 'badge-ready';
+      case 'DELIVERED': return 'badge-delivered';
       default: return '';
     }
   };
@@ -172,12 +174,16 @@ const MechanicDashboard = () => {
                     {steps.map((step, idx) => {
                       const isCompleted = currentStepIndex > idx;
                       const isActive = currentStepIndex === idx;
-                      const canBacktrack = idx < currentStepIndex;
+                      const canBacktrack = idx < currentStepIndex && currentStepIndex < 5;
                       return (
                         <div
                           key={step.id}
                           className={`h-step ${isCompleted ? 'h-step-done' : ''} ${isActive ? 'h-step-active' : ''} ${canBacktrack ? 'h-step-backtrackable' : ''}`}
-                          onClick={() => canBacktrack && handleBacktrackStatus(idx)}
+                          onClick={() => {
+                            // Don't allow clicking the DELIVERED step to advance manually
+                            if (idx === 5) return;
+                            canBacktrack && handleBacktrackStatus(idx);
+                          }}
                           title={canBacktrack ? `Click to backtrack to ${step.label}` : ''}
                           style={{ cursor: canBacktrack ? 'pointer' : 'default' }}
                         >
@@ -191,12 +197,12 @@ const MechanicDashboard = () => {
                 </div>
 
                   <div className="stepper-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                    {currentStepIndex < steps.length - 1 && (
+                    {currentStepIndex < 4 && (
                       <button className="btn btn-primary advance-btn" style={{ flex: 1 }} onClick={handleAdvanceStatus}>
                         Advance to "{steps[currentStepIndex + 1].label}"
                       </button>
                     )}
-                    {currentStepIndex > 1 && ( // Allowing backtrack to Inspection or higher (usually don't revert to "Received" unless error)
+                    {currentStepIndex > 1 && currentStepIndex < 5 && ( // Allowing backtrack to Inspection or higher (usually don't revert to "Received" unless error)
                       <button 
                         className="btn btn-outline backtrack-btn" 
                         style={{ border: '1px solid #ef4444', color: '#ef4444' }}
@@ -207,15 +213,20 @@ const MechanicDashboard = () => {
                     )}
                   </div>
 
-                {currentStepIndex === steps.length - 1 && !activeJob.bill && (
+                {currentStepIndex === 4 && !activeJob.bill && (
                   <div className="step-complete-msg">
                     <CheckCircle size={18} /> Vehicle is ready. Please generate the bill below.
                   </div>
                 )}
+                {currentStepIndex === 5 && (
+                  <div className="step-complete-msg" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>
+                    <Truck size={18} /> Vehicle has been delivered to the customer.
+                  </div>
+                )}
               </div>
 
-              {/* ─── Billing Section (only when READY) ─── */}
-              {activeJob.status === 'READY' && (
+              {/* ─── Billing Section (only when READY or DELIVERED) ─── */}
+              {(activeJob.status === 'READY' || activeJob.status === 'DELIVERED') && (
                 <div className="card workspace-card billing-card">
                   <h4><FileText size={18} className="icon-orange" /> Billing</h4>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, User } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useData } from '../data/DataContext';
 import './Header.css';
 
 const Header = ({ title, user }) => {

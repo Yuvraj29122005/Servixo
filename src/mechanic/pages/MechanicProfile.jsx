@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import { User, Mail, Phone, Wrench, Save, CheckCircle, AlertCircle, Edit2, X } from 'lucide-react';
 import '../css/MechanicProfile.css';
+import { useAuth } from '../../data/AuthContext';
 
 const MechanicProfile = () => {
   const { users, updateMechanicProfile } = useData();
-  // Dynamically find the mechanic user to prevent "Loading profile..." errors
-  const currentUser = users.find(u => u.role === 'mechanic');
+  const { user: authUser, updateUser: updateAuthUser } = useAuth();
+
+  // Only show the logged-in mechanic, not the first mechanic in the DB
+  const currentUser = users.find(u => u.id === authUser?.id) || authUser;
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,6 +68,7 @@ const MechanicProfile = () => {
     e.preventDefault();
     if (validate() && currentUser) {
       updateMechanicProfile(currentUser.id, formData);
+      updateAuthUser({ name: formData.name, phone: formData.phone, specialization: formData.specialization });
       setSaveSuccess(true);
       setIsEditing(false);
       setTimeout(() => setSaveSuccess(false), 3000);

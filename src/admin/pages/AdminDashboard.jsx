@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings, CheckCircle, Clock, Package, Plus, UserPlus } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import '../css/AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -61,8 +61,10 @@ const AdminDashboard = () => {
   const handleAddJob = (e) => {
     e.preventDefault();
     const assignedMechanic = users.find(u => u.id === mechanicId)?.name || 'Unassigned';
+    const jobId = `JOB-${new Date().getFullYear()}-${String(jobs.length + 1).padStart(3, '0')}`;
     const newJob = {
-      id: `JOB-${new Date().getFullYear()}-${String(jobs.length + 1).padStart(3, '0')}`,
+      id: jobId,
+      jobCode: jobId,
       vehicle,
       customer,
       mechanic: assignedMechanic,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import { Receipt, CheckCircle, Clock } from 'lucide-react';
 import '../css/AdminDashboard.css';
 

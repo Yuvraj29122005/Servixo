@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, User, Car, Wrench, FileText, CheckCircle, Package, Truck } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import { useData } from '../../data/DataContext';
 import '../css/JobDetail.css';
 
 const STATUSES = [

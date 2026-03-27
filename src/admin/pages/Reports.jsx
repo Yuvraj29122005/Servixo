@@ -1,28 +1,50 @@
-import React from 'react';
-import { DollarSign, CheckCircle, Calendar, TrendingUp } from 'lucide-react';
-import { useData } from '../../context/DataContext';
+import React, { useMemo } from 'react';
+import { IndianRupee, CheckCircle, Calendar, TrendingUp } from 'lucide-react';
+import { useData } from '../../data/DataContext';
 import '../css/Reports.css';
 
 const Reports = () => {
   const { jobs } = useData();
 
-  const completedJobs = jobs.filter(j => j.status === 'READY' || j.status === 'DELIVERED').length;
-  const totalRevenue = jobs.reduce((sum, j) => sum + (j.bill?.subtotal || 0), 0);
+  const { revenueData, jobsData, days, totalRevenue, completedJobs } = useMemo(() => {
+    const now = new Date();
+    const dayLabels = [];
+    const rev = [];
+    const done = [];
+
+    for (let i = 6; i >= 0; i -= 1) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      dayLabels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+
+      const dayJobs = jobs.filter(j => (j.createdAt || '').toString().slice(0, 10) === key);
+      const dayRevenue = dayJobs.reduce((sum, j) => sum + (j.bill?.subtotal || 0), 0);
+      const dayCompleted = dayJobs.filter(j => j.status === 'READY' || j.status === 'DELIVERED').length;
+      rev.push(dayRevenue);
+      done.push(dayCompleted);
+    }
+
+    const totalRev = jobs.reduce((sum, j) => sum + (j.bill?.subtotal || 0), 0);
+    const completed = jobs.filter(j => j.status === 'READY' || j.status === 'DELIVERED').length;
+
+    return { revenueData: rev, jobsData: done, days: dayLabels, totalRevenue: totalRev, completedJobs: completed };
+  }, [jobs]);
 
   const stats = [
     {
       title: 'TOTAL REVENUE (WEEKLY)',
-      value: `$${(9900).toLocaleString()}`,
-      change: '+12.5% vs last week',
+      value: `₹${Number(totalRevenue || 0).toLocaleString()}`,
+      change: 'Based on all bills',
       changeColor: 'green',
-      icon: <DollarSign size={22} />,
+      icon: <IndianRupee size={22} />,
       iconBg: '#eff6ff',
       iconColor: '#2563eb',
     },
     {
       title: 'COMPLETED JOBS',
-      value: '33',
-      change: '+5.2% vs last week',
+      value: completedJobs.toString(),
+      change: 'READY or DELIVERED',
       changeColor: 'green',
       icon: <CheckCircle size={22} />,
       iconBg: '#ecfdf5',
@@ -30,8 +52,8 @@ const Reports = () => {
     },
     {
       title: 'AVG SERVICE TIME',
-      value: '1.2 days',
-      change: '-0.3 days vs last week',
+      value: `${jobs.length ? '—' : '—'}`,
+      change: 'Coming soon',
       changeColor: 'green',
       icon: <Calendar size={22} />,
       iconBg: '#eff6ff',
@@ -39,8 +61,8 @@ const Reports = () => {
     },
     {
       title: 'CUSTOMER SATISFACTION',
-      value: '98%',
-      change: '+1.1% vs last week',
+      value: '—',
+      change: 'Coming soon',
       changeColor: 'green',
       icon: <TrendingUp size={22} />,
       iconBg: '#ecfdf5',
@@ -48,13 +70,8 @@ const Reports = () => {
     },
   ];
 
-  // Revenue Trend data (mock)
-  const revenueData = [1200, 1100, 1800, 1500, 1400, 800, 500];
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const maxRev = Math.max(...revenueData);
 
-  // Jobs Completed data (mock)
-  const jobsData = [3, 5, 4, 5, 6, 7, 3];
   const maxJobs = Math.max(...jobsData);
 
   // SVG chart helpers
@@ -114,7 +131,7 @@ const Reports = () => {
               return (
                 <g key={v}>
                   <line x1={padL} y1={y} x2={padL + plotW} y2={y} stroke="#e5e7eb" strokeWidth="0.5" />
-                  <text x={padL - 8} y={y + 4} textAnchor="end" fill="#9ca3af" fontSize="9">${v.toLocaleString()}</text>
+                  <text x={padL - 8} y={y + 4} textAnchor="end" fill="#9ca3af" fontSize="9">₹{v.toLocaleString()}</text>
                 </g>
               );
             })}
