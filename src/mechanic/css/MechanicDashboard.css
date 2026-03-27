@@ -41,13 +41,17 @@
   gap: 1.5rem;
 }
 
+/* Bhargav */
+
 .card h4 {
   font-size: 1.125rem;
   margin-bottom: 1rem;
   margin-top: 0;
 }
 
-.reported-issue-card, .service-notes-card, .status-update-card {
+.reported-issue-card,
+.service-notes-card,
+.status-update-card {
   padding: 1.5rem;
 }
 
@@ -100,7 +104,9 @@
   resize: vertical;
 }
 
-.mt-2 { margin-top: 0.5rem; }
+.mt-2 {
+  margin-top: 0.5rem;
+}
 
 /* Stepper */
 .status-stepper-vertical {
@@ -126,7 +132,8 @@
 .stepper-item:not(:last-child)::after {
   content: '';
   position: absolute;
-  left: 15px; /* Half of circle (16) - half of line (1) */
+  left: 15px;
+  /* Half of circle (16) - half of line (1) */
   top: 32px;
   bottom: 0;
   width: 2px;
