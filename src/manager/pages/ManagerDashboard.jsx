@@ -7,7 +7,7 @@ const ManagerDashboard = () => {
 
   // Mechanics that need credentials
   const pendingMechanics = users.filter(u => u.role === 'mechanic' && !u.credentials);
-  
+
   // Jobs that have bills pending approval
   const pendingBills = jobs.filter(j => j.bill && !j.bill.approved);
   const approvedBills = jobs.filter(j => j.bill && j.bill.approved);
@@ -54,7 +54,7 @@ const ManagerDashboard = () => {
                     <strong>{mech.name}</strong>
                     <p className="text-sm text-gray-500 text-muted">Awaiting access</p>
                   </div>
-                  <button 
+                  <button
                     className="btn btn-primary btn-sm"
                     onClick={() => generateCredentials(mech.id)}
                   >
@@ -95,7 +95,7 @@ const ManagerDashboard = () => {
                       Total: ${job.bill.subtotal.toFixed(2)}
                     </div>
                   </div>
-                  <button 
+                  <button
                     className="btn btn-primary w-full"
                     onClick={() => approveBill(job.id)}
                   >
