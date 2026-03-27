@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useData } from '../../context/DataContext';
-import { Car, FileText, Send, CheckCircle, Download } from 'lucide-react';
+import { Car, FileText, Send, CheckCircle, Download, Clock } from 'lucide-react';
 
 const CustomerDashboard = () => {
   const { jobs, sendMessage, makePayment } = useData();
@@ -165,19 +165,19 @@ const CustomerDashboard = () => {
                   {(!isPaid) ? (
                     <div className="mb-4 p-3 bg-yellow-50 text-yellow-800 rounded border border-yellow-200" style={{ backgroundColor: '#fefce8', color: '#854d0e', padding: '0.75rem', borderRadius: '0.25rem', border: '1px solid #fef08a', marginBottom: '1rem' }}>
                       Items will be revealed after payment is complete.
-                      <br/><strong>Total Due: ${activeJob.bill.subtotal.toFixed(2)}</strong>
+                      <br/><strong>Total Due: ₹{activeJob.bill.subtotal.toFixed(2)}</strong>
                     </div>
                   ) : (
                     <div className="space-y-2 mb-4">
                       {activeJob.bill.items.map((item, i) => (
                         <div key={i} className="flex justify-between text-sm" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <span>{item.desc}</span>
-                          <span>${item.price.toFixed(2)}</span>
+                          <span>₹{item.price.toFixed(2)}</span>
                         </div>
                       ))}
                       <div className="flex justify-between font-bold pt-2 border-t mt-2" style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e5e7eb', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
                         <span>Paid Amount:</span>
-                        <span>${activeJob.bill.subtotal.toFixed(2)}</span>
+                        <span>₹{activeJob.bill.subtotal.toFixed(2)}</span>
                       </div>
                     </div>
                   )}
@@ -187,7 +187,7 @@ const CustomerDashboard = () => {
                 <div className="mt-6 flex flex-col gap-3" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.5rem' }}>
                   {isReadyForPayment && (
                     <button className="btn btn-primary w-full flex justify-center items-center gap-2" onClick={handlePayment}>
-                      Pay ${activeJob.bill.subtotal.toFixed(2)} Securely
+                      Pay ₹{activeJob.bill.subtotal.toFixed(2)} Securely
                     </button>
                   )}
                   

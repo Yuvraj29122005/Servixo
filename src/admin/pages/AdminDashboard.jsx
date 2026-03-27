@@ -24,6 +24,7 @@ const AdminDashboard = () => {
 
   const activeJobs = jobs.filter(j => j.status !== 'READY' && j.status !== 'DELIVERED').length;
   const completedJobs = jobs.filter(j => j.status === 'READY').length;
+  const deliveredJobs = jobs.filter(j => j.status === 'DELIVERED').length;
 
   const stats = [
     {
@@ -48,10 +49,10 @@ const AdminDashboard = () => {
       icon: <CheckCircle size={24} className="icon-green" />,
     },
     {
-      title: 'MECHANICS',
-      value: mechanics.length.toString(),
-      subtitle: 'Active staff',
-      subtitleColor: 'gray',
+      title: 'DELIVERED',
+      value: deliveredJobs.toString(),
+      subtitle: 'Handed over',
+      subtitleColor: 'green',
       icon: <Package size={24} className="icon-purple" />,
     },
   ];
@@ -103,6 +104,8 @@ const AdminDashboard = () => {
         return <span className="badge" style={{backgroundColor: '#ede9fe', color: '#6d28d9'}}>QUALITY CHECK</span>;
       case 'READY':
         return <span className="badge badge-ready">READY</span>;
+      case 'DELIVERED':
+        return <span className="badge" style={{backgroundColor: '#dbeafe', color: '#1e40af'}}>DELIVERED</span>;
       default:
         return <span className="badge">{status}</span>;
     }
@@ -115,6 +118,7 @@ const AdminDashboard = () => {
       case 'INSPECTION': return '#f59e0b';
       case 'QUALITY_CHECK': return '#8b5cf6';
       case 'READY': return 'var(--primary-green)';
+      case 'DELIVERED': return '#1e40af';
       default: return '#6b7280';
     }
   };

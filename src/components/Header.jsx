@@ -15,7 +15,7 @@ const Header = ({ title, user }) => {
         <div className="user-profile">
           <div className="user-info">
             <span className="user-name">{user?.name || 'Manager User'}</span>
-            <span className="user-role">{user?.role === 'admin' ? 'Administrator' : 'Mechanic'}</span>
+            <span className="user-role">{user?.role === 'admin' ? 'Administrator' : user?.role === 'mechanic' ? 'Mechanic' : user?.role === 'manager' ? 'Manager' : 'Customer'}</span>
           </div>
           <div className="avatar">
             <User size={20} />

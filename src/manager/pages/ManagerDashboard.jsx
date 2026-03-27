@@ -1,112 +1,191 @@
 import React from 'react';
 import { useData } from '../../context/DataContext';
-import { CheckCircle, Users, FileText } from 'lucide-react';
+import { CheckCircle, Users, FileText, Clock } from 'lucide-react';
 
 const ManagerDashboard = () => {
   const { jobs, users, generateCredentials, approveBill } = useData();
 
-  // Mechanics that need credentials
   const pendingMechanics = users.filter(u => u.role === 'mechanic' && !u.credentials);
-  
-  // Jobs that have bills pending approval
   const pendingBills = jobs.filter(j => j.bill && !j.bill.approved);
   const approvedBills = jobs.filter(j => j.bill && j.bill.approved);
 
   const stats = [
-    { title: 'PENDING CREDENTIALS', value: pendingMechanics.length.toString(), icon: <Users size={24} className="icon-blue" /> },
-    { title: 'BILLS TO APPROVE', value: pendingBills.length.toString(), icon: <FileText size={24} className="icon-orange" /> },
-    { title: 'APPROVED BILLS', value: approvedBills.length.toString(), icon: <CheckCircle size={24} className="icon-green" /> }
+    { title: 'PENDING CREDENTIALS', value: pendingMechanics.length, icon: <Users size={22} className="icon-blue" /> },
+    { title: 'BILLS TO APPROVE', value: pendingBills.length, icon: <Clock size={22} className="icon-orange" /> },
+    { title: 'APPROVED BILLS', value: approvedBills.length, icon: <CheckCircle size={22} className="icon-green" /> }
   ];
 
   return (
-    <div className="manager-dashboard p-6">
-      <div className="flex justify-between items-center mb-6" style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Manager Area</h2>
-      </div>
+    <div className="manager-dashboard" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-      <div className="stats-grid mb-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
         {stats.map((stat, idx) => (
-          <div className="card p-4 flex items-center gap-4" key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-            <div className="p-3 bg-gray-100 rounded-full" style={{ backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '50%' }}>
+          <div
+            key={idx}
+            className="card"
+            style={{
+              padding: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem'
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#f1f5f9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
               {stat.icon}
             </div>
             <div>
-              <div className="text-gray-500 text-sm font-semibold">{stat.title}</div>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#6b7280', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                {stat.title}
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{stat.value}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-        {/* Credentials Generation */}
-        <div className="card">
-          <h3 className="mb-4 text-lg font-semibold flex items-center gap-2" style={{ marginBottom: '1rem' }}>
-            <Users size={20} /> Mechanic Credentials
-          </h3>
-          {pendingMechanics.length === 0 ? (
-            <p className="text-muted">All mechanics have active credentials.</p>
-          ) : (
-            <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {pendingMechanics.map(mech => (
-                <div key={mech.id} className="flex justify-between items-center p-3 border rounded" style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem' }}>
-                  <div>
-                    <strong>{mech.name}</strong>
-                    <p className="text-sm text-gray-500 text-muted">Awaiting access</p>
-                  </div>
-                  <button 
-                    className="btn btn-primary btn-sm"
-                    onClick={() => generateCredentials(mech.id)}
-                  >
-                    Generate Credentials
-                  </button>
+      {/* Mechanic Credentials */}
+      <div className="card" style={{ padding: '1.5rem' }}>
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.1rem' }}>
+          <Users size={20} /> Mechanic Credentials
+        </h3>
+        {pendingMechanics.length === 0 ? (
+          <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>All mechanics have active credentials.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {pendingMechanics.map(mech => (
+              <div
+                key={mech.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px'
+                }}
+              >
+                <div>
+                  <strong>{mech.name}</strong>
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.25rem 0 0' }}>Awaiting access</p>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Bill Approvals */}
-        <div className="card">
-          <h3 className="mb-4 text-lg font-semibold flex items-center gap-2" style={{ marginBottom: '1rem' }}>
-            <FileText size={20} /> Pending Bill Approvals
-          </h3>
-          {pendingBills.length === 0 ? (
-            <p className="text-muted">No pending bills to approve.</p>
-          ) : (
-            <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {pendingBills.map(job => (
-                <div key={job.id} className="p-4 border rounded" style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem' }}>
-                  <div className="flex justify-between mb-2" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <strong>{job.id} - {job.vehicle}</strong>
-                    <span className="badge badge-inspection">Pending</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2 text-muted">Mechanic: {job.mechanic}</p>
-                  <div className="bg-gray-50 p-2 rounded mb-3" style={{ backgroundColor: '#f9fafb', padding: '0.5rem', borderRadius: '0.25rem', marginBottom: '0.75rem' }}>
-                    <ul className="text-sm list-disc list-inside">
-                      {job.bill.items.map((item, i) => (
-                        <li key={i} className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.desc}</span>
-                          <span>${item.price.toFixed(2)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="text-right font-bold mt-2 pt-2 border-t" style={{ borderTop: '1px solid #e5e7eb', marginTop: '0.5rem', paddingTop: '0.5rem', textAlign: 'right' }}>
-                      Total: ${job.bill.subtotal.toFixed(2)}
-                    </div>
-                  </div>
-                  <button 
-                    className="btn btn-primary w-full"
-                    onClick={() => approveBill(job.id)}
-                  >
-                    Approve & Issue Final Bill
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <button className="btn btn-primary" onClick={() => generateCredentials(mech.id)}>
+                  Generate Credentials
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Pending Bill Approvals */}
+      <div className="card" style={{ padding: '1.5rem' }}>
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.1rem' }}>
+          <FileText size={20} /> Pending Bill Approvals
+        </h3>
+        {pendingBills.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+            <CheckCircle size={32} style={{ marginBottom: '0.5rem', opacity: 0.4 }} />
+            <p>No pending bills to approve.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {pendingBills.map(job => (
+              <div
+                key={job.id}
+                style={{
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px',
+                  borderLeft: '4px solid #f59e0b',
+                  padding: '1.25rem',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <div>
+                    <strong style={{ fontSize: '1rem' }}>{job.vehicle}</strong>
+                    <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: '#6b7280' }}>{job.id}</span>
+                  </div>
+                  <span className="badge badge-inspection">Pending</span>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.75rem' }}>
+                  Mechanic: <strong>{job.mechanic}</strong> &bull; Customer: {job.customer}
+                </p>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '1rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <th style={{ textAlign: 'left', padding: '0.5rem 0.75rem', fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Item</th>
+                      <th style={{ textAlign: 'right', padding: '0.5rem 0.75rem', fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {job.bill.items.map((item, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '0.6rem 0.75rem', fontSize: '0.9rem' }}>{item.desc}</td>
+                        <td style={{ padding: '0.6rem 0.75rem', fontSize: '0.9rem', textAlign: 'right' }}>₹{item.price.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td style={{ padding: '0.75rem', fontWeight: 700, borderTop: '2px solid #e5e7eb' }}>Total</td>
+                      <td style={{ padding: '0.75rem', fontWeight: 700, textAlign: 'right', borderTop: '2px solid #e5e7eb' }}>₹{job.bill.subtotal.toFixed(2)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+                <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => approveBill(job.id)}>
+                  <CheckCircle size={16} /> Approve & Issue Bill
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Approved Bills History */}
+      {approvedBills.length > 0 && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.1rem' }}>
+            <CheckCircle size={20} style={{ color: '#16a34a' }} /> Approved Bills
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {approvedBills.map(job => (
+              <div
+                key={job.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  border: '1px solid #e5e7eb',
+                  borderLeft: '4px solid #16a34a',
+                  borderRadius: '8px'
+                }}
+              >
+                <div>
+                  <strong>{job.vehicle}</strong>
+                  <span style={{ marginLeft: '0.5rem', color: '#6b7280', fontSize: '0.8rem' }}>{job.id}</span>
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.25rem 0 0' }}>
+                    {job.mechanic} &bull; {job.customer}
+                  </p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>₹{job.bill.subtotal.toFixed(2)}</div>
+                  <span className="badge badge-ready" style={{ marginTop: '0.25rem' }}>Approved</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
