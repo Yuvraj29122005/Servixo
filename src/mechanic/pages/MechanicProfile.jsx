@@ -5,8 +5,8 @@ import '../css/MechanicProfile.css';
 
 const MechanicProfile = () => {
   const { users, updateMechanicProfile } = useData();
-  const mechanicName = 'Alex Johnson';
-  const currentUser = users.find(u => u.name === mechanicName);
+  // Dynamically find the mechanic user to prevent "Loading profile..." errors
+  const currentUser = users.find(u => u.role === 'mechanic');
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
