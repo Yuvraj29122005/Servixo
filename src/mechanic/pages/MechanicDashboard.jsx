@@ -35,6 +35,16 @@ const MechanicDashboard = () => {
     }
   };
 
+  const handleBacktrackStatus = (targetIndex) => {
+    if (activeJob && targetIndex < currentStepIndex) {
+      const prevStatus = steps[targetIndex].id;
+      // If moving back from READY, we might want to clear or mark bill as "needed again"
+      // For now, let's just update the status. 
+      // If the backend/context allowed it, we might set bill to null if targetIndex < 4
+      updateJobStatus(activeJob.id, prevStatus);
+    }
+  };
+
 
 
   const handleAddBillItem = () => {
@@ -159,28 +169,43 @@ const MechanicDashboard = () => {
               <div className="card workspace-card">
                 <h4><CheckCircle size={18} className="icon-green" /> Update Progress</h4>
                 <div className="status-stepper-horizontal">
-                  {steps.map((step, idx) => {
-                    const isCompleted = currentStepIndex > idx;
-                    const isActive = currentStepIndex === idx;
-                    return (
-                      <div
-                        key={step.id}
-                        className={`h-step ${isCompleted ? 'h-step-done' : ''} ${isActive ? 'h-step-active' : ''}`}
-                      >
-                        <div className="h-step-circle">
-                          {isCompleted ? '✓' : idx + 1}
+                    {steps.map((step, idx) => {
+                      const isCompleted = currentStepIndex > idx;
+                      const isActive = currentStepIndex === idx;
+                      const canBacktrack = idx < currentStepIndex;
+                      return (
+                        <div
+                          key={step.id}
+                          className={`h-step ${isCompleted ? 'h-step-done' : ''} ${isActive ? 'h-step-active' : ''} ${canBacktrack ? 'h-step-backtrackable' : ''}`}
+                          onClick={() => canBacktrack && handleBacktrackStatus(idx)}
+                          title={canBacktrack ? `Click to backtrack to ${step.label}` : ''}
+                          style={{ cursor: canBacktrack ? 'pointer' : 'default' }}
+                        >
+                          <div className="h-step-circle">
+                            {isCompleted ? '✓' : idx + 1}
+                          </div>
+                          <div className="h-step-label">{step.label}</div>
                         </div>
-                        <div className="h-step-label">{step.label}</div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
 
-                {currentStepIndex < steps.length - 1 && (
-                  <button className="btn btn-primary advance-btn" onClick={handleAdvanceStatus}>
-                    Advance to "{steps[currentStepIndex + 1].label}"
-                  </button>
-                )}
+                  <div className="stepper-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                    {currentStepIndex < steps.length - 1 && (
+                      <button className="btn btn-primary advance-btn" style={{ flex: 1 }} onClick={handleAdvanceStatus}>
+                        Advance to "{steps[currentStepIndex + 1].label}"
+                      </button>
+                    )}
+                    {currentStepIndex > 1 && ( // Allowing backtrack to Inspection or higher (usually don't revert to "Received" unless error)
+                      <button 
+                        className="btn btn-outline backtrack-btn" 
+                        style={{ border: '1px solid #ef4444', color: '#ef4444' }}
+                        onClick={() => handleBacktrackStatus(currentStepIndex - 1)}
+                      >
+                        Backtrack for Re-Repair
+                      </button>
+                    )}
+                  </div>
 
                 {currentStepIndex === steps.length - 1 && !activeJob.bill && (
                   <div className="step-complete-msg">

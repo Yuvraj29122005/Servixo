@@ -28,7 +28,7 @@ const MechanicProfile = () => {
         specialization: currentUser.specialization || ''
       });
     }
-  }, [currentUser, isEditing]); // Reset form data when editing toggles or user changes
+  }, [currentUser, isEditing]); 
 
   const validate = () => {
     let newErrors = {};
@@ -66,7 +66,7 @@ const MechanicProfile = () => {
     if (validate() && currentUser) {
       updateMechanicProfile(currentUser.id, formData);
       setSaveSuccess(true);
-      setIsEditing(false); // Switch to view mode on success
+      setIsEditing(false);
       setTimeout(() => setSaveSuccess(false), 3000);
     }
   };

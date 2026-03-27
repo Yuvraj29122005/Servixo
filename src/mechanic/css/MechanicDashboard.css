@@ -267,9 +267,32 @@
   color: var(--primary-green);
 }
 
+.h-step-backtrackable:hover .h-step-circle {
+  border-color: #ef4444;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.h-step-backtrackable:hover .h-step-label {
+  color: #ef4444;
+}
+
 .advance-btn {
   width: 100%;
   margin-top: 0.25rem;
+}
+
+.backtrack-btn {
+  flex: 1;
+  border-color: #ef4444;
+  color: #ef4444;
+  transition: all 0.2s ease;
+}
+
+.backtrack-btn:hover {
+  background-color: #fef2f2;
+  border-color: #dc2626;
+  color: #dc2626;
 }
 
 .step-complete-msg {
