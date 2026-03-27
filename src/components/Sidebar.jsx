@@ -1,0 +1,59 @@
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Users, Wrench, FileText, Settings, LogOut, FileBadge } from 'lucide-react';
+import './Sidebar.css';
+
+const Sidebar = ({ role }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/login');
+  };
+
+  const adminLinks = [
+    { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
+    { name: 'Job Cards', path: '/admin/jobs', icon: <FileBadge size={20} /> },
+    { name: 'Service Workflow', path: '/admin/workflow', icon: <Wrench size={20} /> },
+    { name: 'Mechanics', path: '/admin/mechanics', icon: <Users size={20} /> },
+    { name: 'Reports / Analytics', path: '/admin/reports', icon: <FileText size={20} /> },
+    { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
+  ];
+
+  const mechanicLinks = [
+    { name: 'Dashboard', path: '/mechanic', icon: <LayoutDashboard size={20} /> },
+    { name: 'My Jobs', path: '/mechanic/jobs', icon: <Wrench size={20} /> },
+  ];
+
+  const links = role === 'admin' ? adminLinks : mechanicLinks;
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}}>
+        <span style={{ color: '#16a34a' }}><Wrench /></span> Servixo
+      </div>
+      
+      <nav className="sidebar-nav">
+        {links.map((link) => (
+          <NavLink
+            key={link.name}
+            to={link.path}
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+            end={link.path === '/admin' || link.path === '/mechanic'}
+          >
+            {link.icon}
+            {link.name}
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        <button onClick={handleLogout} className="sidebar-link w-full" style={{ border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', padding: '0.75rem 1rem' }}>
+          <LogOut size={20} />
+          Logout
+        </button>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;
