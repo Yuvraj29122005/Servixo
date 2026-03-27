@@ -1,52 +1,45 @@
 import React, { useState } from 'react';
-import { Briefcase, Calendar, MessageSquare, Wrench, FileText, Send } from 'lucide-react';
+import { Car, Wrench, FileText, CheckCircle, Truck } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import '../css/MechanicDashboard.css';
 
 const MechanicDashboard = () => {
-  const { jobs, updateJobStatus, sendMessage, submitBill } = useData();
-  
-  // We mock the currently logged-in mechanic's name for this view
+  const { jobs, updateJobStatus, submitBill, markDelivered } = useData();
+
   const mechanicName = 'Alex Johnson';
-  
+
   const myJobs = jobs.filter(j => j.mechanic === mechanicName && j.status !== 'DELIVERED');
-  
+
   const [activeJobId, setActiveJobId] = useState(myJobs.length > 0 ? myJobs[0].id : null);
   const activeJob = myJobs.find(j => j.id === activeJobId);
 
-  const [noteText, setNoteText] = useState('');
+
   const [billItems, setBillItems] = useState([]);
   const [newItemDesc, setNewItemDesc] = useState('');
   const [newItemPrice, setNewItemPrice] = useState('');
 
   const steps = [
-    { id: 'RECEIVED', label: 'Received' },
-    { id: 'INSPECTION', label: 'Inspection' },
-    { id: 'REPAIRING', label: 'Repairing' },
-    { id: 'QUALITY_CHECK', label: 'Quality Check' },
-    { id: 'READY', label: 'Ready (Washing Done)' }
+    { id: 'RECEIVED', label: 'Received', description: 'Vehicle received at garage' },
+    { id: 'INSPECTION', label: 'Inspection', description: 'Checking reported issues' },
+    { id: 'REPAIRING', label: 'Repairing', description: 'Repair work in progress' },
+    { id: 'QUALITY_CHECK', label: 'Quality Check', description: 'Testing repaired parts' },
+    { id: 'READY', label: 'Ready', description: 'Washed and ready for delivery' }
   ];
 
-  const handleStatusUpdate = (newStatus) => {
-    if (activeJob) {
-      updateJobStatus(activeJob.id, newStatus);
+  const currentStepIndex = activeJob ? steps.findIndex(s => s.id === activeJob.status) : -1;
+
+  const handleAdvanceStatus = () => {
+    if (activeJob && currentStepIndex < steps.length - 1) {
+      const nextStatus = steps[currentStepIndex + 1].id;
+      updateJobStatus(activeJob.id, nextStatus);
     }
   };
 
-  const handleAddNote = () => {
-    if (noteText.trim() && activeJob) {
-      sendMessage(activeJob.id, {
-        sender: mechanicName,
-        text: noteText,
-        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-      });
-      setNoteText('');
-    }
-  };
+
 
   const handleAddBillItem = () => {
-    if (newItemDesc && newItemPrice) {
-      setBillItems([...billItems, { desc: newItemDesc, price: parseFloat(newItemPrice) }]);
+    if (newItemDesc.trim() && newItemPrice) {
+      setBillItems([...billItems, { desc: newItemDesc.trim(), price: parseFloat(newItemPrice) }]);
       setNewItemDesc('');
       setNewItemPrice('');
     }
@@ -59,31 +52,37 @@ const MechanicDashboard = () => {
   const handleSubmitBill = () => {
     if (activeJob && billItems.length > 0) {
       const subtotal = billItems.reduce((acc, item) => acc + item.price, 0);
-      submitBill(activeJob.id, {
-        items: billItems,
-        subtotal
-      });
+      submitBill(activeJob.id, { items: billItems, subtotal });
       setBillItems([]);
-      alert("Bill items submitted to Manager for approval!");
     }
   };
 
-  if (!activeJob) {
+  const handleMarkDelivered = () => {
+    if (activeJob) {
+      markDelivered(activeJob.id);
+      setActiveJobId(null);
+    }
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'RECEIVED': return 'badge-received';
+      case 'INSPECTION': return 'badge-inspection';
+      case 'REPAIRING': return 'badge-repairing';
+      case 'QUALITY_CHECK': return 'badge-quality';
+      case 'READY': return 'badge-ready';
+      default: return '';
+    }
+  };
+
+  /* ─── No active jobs state ─── */
+  if (myJobs.length === 0) {
     return (
-      <div className="mechanic-dashboard p-6">
-        <h2 className="text-xl font-bold mb-4">Mechanic Workspace</h2>
-        <p>No active jobs assigned to you at the moment.</p>
-        <div style={{ marginTop: '2rem' }}>
-          <h3>Your Assigned Jobs</h3>
-          <div className="stats-grid mechanic-stats">
-            {myJobs.map(job => (
-              <div key={job.id} className="card p-4 cursor-pointer" onClick={() => setActiveJobId(job.id)}>
-                <strong>{job.vehicle}</strong>
-                <p>{job.id}</p>
-                <span className="badge mt-2 block">{job.status}</span>
-              </div>
-            ))}
-          </div>
+      <div className="mechanic-dashboard">
+        <div className="mechanic-empty-state">
+          <Car size={48} />
+          <h3>No Active Jobs</h3>
+          <p>You don't have any assigned jobs at the moment. Check back later.</p>
         </div>
       </div>
     );
@@ -91,158 +90,210 @@ const MechanicDashboard = () => {
 
   return (
     <div className="mechanic-dashboard">
-      <div className="flex justify-between items-center mb-6" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          {myJobs.map(job => (
-            <button 
-              key={job.id} 
-              className={`btn ${activeJobId === job.id ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => { setActiveJobId(job.id); setBillItems([]); }}
-            >
-              {job.id} - {job.vehicle}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div className="mechanic-layout">
 
-      <div className="job-workspace">
-        <div className="workspace-header">
-          <h3>Current Job: {activeJob.id}</h3>
-          <span className="vehicle-tag">{activeJob.vehicle} • {activeJob.customer}</span>
-        </div>
+        {/* ─── LEFT: Assigned Cars ─── */}
+        <aside className="assigned-cars-panel">
+          <div className="panel-header">
+            <Car size={20} />
+            <h3>Assigned Cars</h3>
+            <span className="job-count">{myJobs.length}</span>
+          </div>
 
-        <div className="workspace-grid">
-          {/* Left Side: Notes, Issues, Billing */}
-          <div className="workspace-left">
-            <div className="card reported-issue-card">
-              <h4 className="flex items-center gap-2">
-                <Wrench size={18} className="icon-blue" />
-                Reported Issues
-              </h4>
-              <ul className="issue-list">
-                {activeJob.issues.map((iss, i) => (
-                  <li key={i}>{iss}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="card service-notes-card">
-              <h4 className="flex items-center gap-2">
-                <MessageSquare size={18} className="icon-orange" />
-                Chat / Service Notes
-              </h4>
-              <div className="notes-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                {activeJob.notes.map((note, i) => (
-                  <div key={i} className="note-bubble" style={{ 
-                    backgroundColor: note.sender === mechanicName ? '#eff6ff' : '#f3f4f6',
-                    marginLeft: note.sender === mechanicName ? 'auto' : '0',
-                    marginRight: note.sender === mechanicName ? '0' : 'auto',
-                    width: '85%'
-                  }}>
-                    <strong>{note.sender} {note.sender === mechanicName ? '(You)' : ''}</strong> - {note.time}
-                    <p>{note.text}</p>
-                  </div>
-                ))}
-                {activeJob.notes.length === 0 && <p className="text-muted">No messages yet.</p>}
+          <div className="car-list">
+            {myJobs.map(job => (
+              <div
+                key={job.id}
+                className={`car-card ${activeJobId === job.id ? 'car-card-active' : ''}`}
+                onClick={() => { setActiveJobId(job.id); setBillItems([]); }}
+              >
+                <div className="car-card-top">
+                  <strong className="car-name">{job.vehicle}</strong>
+                  <span className={`badge ${getStatusBadgeClass(job.status)}`}>
+                    {job.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <div className="car-card-meta">
+                  <span>{job.customer}</span>
+                  <span>{job.id}</span>
+                </div>
               </div>
-              <div className="add-note-area" style={{ display: 'flex', gap: '0.5rem' }}>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  placeholder="Message customer..." 
-                  value={noteText}
-                  onChange={e => setNoteText(e.target.value)}
-                  onKeyPress={e => e.key === 'Enter' && handleAddNote()}
-                  style={{ flex: 1 }}
-                />
-                <button className="btn btn-primary" onClick={handleAddNote}>
-                  <Send size={18} />
-                </button>
-              </div>
-            </div>
+            ))}
+          </div>
+        </aside>
 
-            {/* Billing Module */}
-            <div className="card service-notes-card">
-              <h4 className="flex items-center gap-2">
-                <FileText size={18} className="icon-green" />
-                Generate Bill Items
-              </h4>
-              
-              {activeJob.bill ? (
+        {/* ─── RIGHT: Workspace ─── */}
+        <main className="workspace-panel">
+          {!activeJob ? (
+            <div className="mechanic-empty-state">
+              <Wrench size={40} />
+              <h3>Select a Job</h3>
+              <p>Click any car from the left panel to view its workspace.</p>
+            </div>
+          ) : (
+            <>
+              {/* Job header */}
+              <div className="workspace-job-header">
                 <div>
-                  <div className="badge badge-ready mb-4 text-center w-full block">
-                    Bill Submitted {activeJob.bill.approved ? '(Approved)' : '(Pending Approval)'}
+                  <h2>{activeJob.vehicle}</h2>
+                  <span className="workspace-meta">
+                    {activeJob.id} &bull; {activeJob.customer} &bull; Est. Delivery: {activeJob.delivery}
+                  </span>
+                </div>
+                <span className={`badge ${getStatusBadgeClass(activeJob.status)}`}>
+                  {activeJob.status.replace('_', ' ')}
+                </span>
+              </div>
+
+              {/* Reported Issues */}
+              <div className="card workspace-card">
+                <h4><Wrench size={18} className="icon-blue" /> Reported Issues</h4>
+                <ul className="issue-list">
+                  {activeJob.issues.map((issue, i) => (
+                    <li key={i}>{issue}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Status Stepper */}
+              <div className="card workspace-card">
+                <h4><CheckCircle size={18} className="icon-green" /> Update Progress</h4>
+                <div className="status-stepper-horizontal">
+                  {steps.map((step, idx) => {
+                    const isCompleted = currentStepIndex > idx;
+                    const isActive = currentStepIndex === idx;
+                    return (
+                      <div
+                        key={step.id}
+                        className={`h-step ${isCompleted ? 'h-step-done' : ''} ${isActive ? 'h-step-active' : ''}`}
+                      >
+                        <div className="h-step-circle">
+                          {isCompleted ? '✓' : idx + 1}
+                        </div>
+                        <div className="h-step-label">{step.label}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {currentStepIndex < steps.length - 1 && (
+                  <button className="btn btn-primary advance-btn" onClick={handleAdvanceStatus}>
+                    Advance to "{steps[currentStepIndex + 1].label}"
+                  </button>
+                )}
+
+                {currentStepIndex === steps.length - 1 && !activeJob.bill && (
+                  <div className="step-complete-msg">
+                    <CheckCircle size={18} /> Vehicle is ready. Please generate the bill below.
                   </div>
-                  <ul className="issue-list">
-                    {activeJob.bill.items.map((item, i) => (
-                      <li key={i} className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>{item.desc}</span>
-                        <strong>${item.price.toFixed(2)}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-4 text-right">
-                    <strong>Subtotal: ${activeJob.bill.subtotal.toFixed(2)}</strong>
+                )}
+              </div>
+
+              {/* ─── Billing Section (only when READY) ─── */}
+              {activeJob.status === 'READY' && (
+                <div className="card workspace-card billing-card">
+                  <h4><FileText size={18} className="icon-orange" /> Billing</h4>
+
+                  {activeJob.bill ? (
+                    <div className="bill-submitted-view">
+                      <div className={`bill-status-banner ${activeJob.bill.approved ? 'bill-approved' : 'bill-pending'}`}>
+                        {activeJob.bill.approved
+                          ? '✓ Bill Approved by Manager'
+                          : '⏳ Bill Sent — Waiting for Manager Approval'}
+                      </div>
+                      <table className="bill-table">
+                        <thead>
+                          <tr><th>Item</th><th>Cost</th></tr>
+                        </thead>
+                        <tbody>
+                          {activeJob.bill.items.map((item, i) => (
+                            <tr key={i}><td>{item.desc}</td><td>₹{item.price.toFixed(2)}</td></tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr><td><strong>Total</strong></td><td><strong>₹{activeJob.bill.subtotal.toFixed(2)}</strong></td></tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="bill-form">
+                      <p className="bill-hint">Add parts and labour costs. Manager will review and approve.</p>
+
+                      {billItems.length > 0 && (
+                        <table className="bill-table">
+                          <thead>
+                            <tr><th>Item</th><th>Cost</th><th></th></tr>
+                          </thead>
+                          <tbody>
+                            {billItems.map((item, i) => (
+                              <tr key={i}>
+                                <td>{item.desc}</td>
+                                <td>₹{item.price.toFixed(2)}</td>
+                                <td>
+                                  <button className="remove-item-btn" onClick={() => handleRemoveBillItem(i)}>×</button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td><strong>Total</strong></td>
+                              <td colSpan="2"><strong>₹{billItems.reduce((a, b) => a + b.price, 0).toFixed(2)}</strong></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      )}
+
+                      <div className="bill-input-row">
+                        <input
+                          type="text"
+                          className="form-input"
+                          placeholder="Item description"
+                          value={newItemDesc}
+                          onChange={e => setNewItemDesc(e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          className="form-input bill-price-input"
+                          placeholder="Price"
+                          value={newItemPrice}
+                          onChange={e => setNewItemPrice(e.target.value)}
+                          onKeyPress={e => e.key === 'Enter' && handleAddBillItem()}
+                        />
+                        <button className="btn btn-outline" onClick={handleAddBillItem}>Add</button>
+                      </div>
+
+                      <button
+                        className="btn btn-primary submit-bill-btn"
+                        onClick={handleSubmitBill}
+                        disabled={billItems.length === 0}
+                      >
+                        Submit Bill to Manager
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── Deliver Button (only when bill approved) ─── */}
+              {activeJob.status === 'READY' && activeJob.bill && activeJob.bill.approved && (
+                <div className="card workspace-card deliver-card">
+                  <div className="deliver-content">
+                    <div>
+                      <h4><Truck size={18} className="icon-green" /> Ready for Delivery</h4>
+                      <p>Bill approved. Hand over the vehicle and mark as delivered.</p>
+                    </div>
+                    <button className="btn btn-deliver" onClick={handleMarkDelivered}>
+                      <Truck size={18} /> Mark as Delivered
+                    </button>
                   </div>
                 </div>
-              ) : (
-                <>
-                  <p className="text-muted text-sm mb-4">Add parts and labor. Manager will approve.</p>
-                  <ul className="issue-list mb-4">
-                    {billItems.map((item, i) => (
-                      <li key={i} className="flex justify-between items-center" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>{item.desc} - ${item.price.toFixed(2)}</span>
-                        <button onClick={() => handleRemoveBillItem(i)} className="text-red-500" style={{ color: 'red', cursor: 'pointer', background: 'none', border: 'none' }}>×</button>
-                      </li>
-                    ))}
-                  </ul>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <input type="text" className="form-input" placeholder="Item description" value={newItemDesc} onChange={e => setNewItemDesc(e.target.value)} style={{ flex: 2 }} />
-                    <input type="number" className="form-input" placeholder="Price" value={newItemPrice} onChange={e => setNewItemPrice(e.target.value)} style={{ flex: 1 }} />
-                    <button className="btn btn-outline" onClick={handleAddBillItem}>Add</button>
-                  </div>
-                  <button className="btn btn-primary w-full" onClick={handleSubmitBill} disabled={billItems.length === 0}>
-                    Submit to Manager
-                  </button>
-                </>
               )}
-            </div>
-          </div>
 
-          {/* Right Side: Status Update */}
-          <div className="workspace-right">
-            <div className="card status-update-card">
-              <h4>Update Progress</h4>
-              <p className="text-muted" style={{ marginBottom: '1.5rem', fontSize: '0.875rem' }}>
-                Select any stage to update immediately. You can skip steps if needed.
-              </p>
-              
-              <div className="status-stepper-vertical">
-                {steps.map((step, idx) => {
-                  const isActive = step.id === activeJob.status;
-                  const isPast = steps.findIndex(s => s.id === activeJob.status) > idx;
 
-                  return (
-                    <div 
-                      key={step.id} 
-                      className={`stepper-item ${isActive ? 'active' : ''} ${isPast ? 'completed' : ''}`}
-                      onClick={() => handleStatusUpdate(step.id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <div className="stepper-circle">
-                        {isPast ? '✓' : idx + 1}
-                      </div>
-                      <div className="stepper-content">
-                        <strong>{step.label}</strong>
-                        {isActive && <span className="stepper-subtext">Current Stage</span>}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+            </>
+          )}
+        </main>
       </div>
     </div>
   );
