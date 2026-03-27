@@ -155,7 +155,7 @@ const LandingPage = () => {
                 <div className="cf-results-header">
                   <div>
                     <h3 className="cf-vehicle-name">Toyota Camry 2021</h3>
-                    <p className="text-muted text-sm">{jobId} • Sarah Connor</p>
+                    <p className="text-muted text-sm">{jobId} • yuvraj dhadhal</p>
                   </div>
                   <span className="badge badge-ready">READY</span>
                 </div>
@@ -203,7 +203,7 @@ const LandingPage = () => {
                     </div>
                     <div className="cf-mechanic-info">
                       <div className="cf-mechanic-row">
-                        <span className="cf-mechanic-name">Alex Johnson</span>
+                        <span className="cf-mechanic-name">prince viradiya</span>
                         <span className="badge badge-ready" style={{fontSize: '0.7rem'}}>CERTIFIED</span>
                       </div>
                       <span className="text-muted text-sm">Senior Mechanic • 8 years experience</span>

@@ -9,8 +9,8 @@ export const DataProvider = ({ children }) => {
     {
       id: 'JOB-2024-001',
       vehicle: 'Toyota Camry 2021',
-      customer: 'Sarah Connor',
-      mechanic: 'Alex Johnson',
+      customer: 'yuvraj dhadhal',
+      mechanic: 'prince viradiya',
       status: 'REPAIRING',
       date: 'May 10',
       time: '2:30 PM',
@@ -54,7 +54,7 @@ export const DataProvider = ({ children }) => {
 
   const [users, setUsers] = useState([
     { id: '1', name: 'Admin User', role: 'admin' },
-    { id: '2', name: 'Alex Johnson', role: 'mechanic', credentials: true },
+    { id: '2', name: 'prince viradiya', role: 'mechanic', credentials: true },
     { id: '3', name: 'Marcus Smith', role: 'mechanic', credentials: true },
     { id: '4', name: 'John Wick', role: 'customer' },
     { id: '5', name: 'Sarah Connor', role: 'customer' },
