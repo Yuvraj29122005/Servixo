@@ -26,6 +26,14 @@
   box-shadow: var(--shadow-md);
 }
 
+.stat-card-clickable {
+  cursor: pointer;
+}
+
+.stat-card-clickable:hover {
+  border-color: var(--primary-blue);
+}
+
 .stat-icon-wrapper {
   width: 48px;
   height: 48px;
@@ -109,6 +117,18 @@
   padding: 1.25rem 0;
   border-bottom: 1px solid var(--border-light);
   gap: 1rem;
+}
+
+.activity-item-clickable {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 0 -1rem;
+  transition: background-color 0.15s;
+}
+
+.activity-item-clickable:hover {
+  background-color: #f8fafc;
 }
 
 .activity-item:last-child {

@@ -1,0 +1,355 @@
+/* ===== Job Cards Page ===== */
+.jobcards-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header */
+.jc-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.jc-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.jc-page-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.jc-create-btn {
+  white-space: nowrap;
+  padding: 0.65rem 1.5rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+}
+
+/* Toolbar */
+.jc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.jc-search-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.jc-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.jc-search-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem 0.65rem 2.6rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.875rem;
+  background: var(--bg-card);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.jc-search-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px var(--primary-blue-light);
+}
+
+.jc-filter-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.jc-filter-btn {
+  font-size: 0.8125rem;
+  padding: 0.6rem 1rem;
+}
+
+.jc-filter-btn.active-filter {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+  background: var(--primary-blue-light);
+}
+
+/* Dropdown */
+.jc-dropdown-wrapper {
+  position: relative;
+}
+
+.jc-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  min-width: 180px;
+  padding: 0.35rem 0;
+  animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.jc-dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 1rem;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.825rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.jc-dropdown-item:hover {
+  background: var(--bg-main);
+}
+
+.jc-dropdown-item.selected {
+  color: var(--primary-blue);
+  font-weight: 600;
+  background: var(--primary-blue-light);
+}
+
+/* Table wrapper */
+.jc-table-wrapper {
+  overflow-x: auto;
+}
+
+.jc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.jc-table thead th {
+  text-align: left;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-light);
+  background-color: var(--bg-card);
+  white-space: nowrap;
+}
+
+.jc-table tbody td {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.jc-table-row {
+  transition: background-color 0.15s;
+}
+
+.jc-table-row:hover {
+  background-color: #f8fafc;
+}
+
+.jc-table-row:last-child td {
+  border-bottom: none;
+}
+
+/* Job ID */
+.jc-job-id {
+  font-weight: 700;
+  color: var(--primary-blue);
+  cursor: pointer;
+}
+
+.jc-job-id:hover {
+  text-decoration: underline;
+}
+
+/* Customer cell */
+.jc-customer-cell,
+.jc-vehicle-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.jc-customer-name,
+.jc-vehicle-name {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.jc-customer-phone,
+.jc-vehicle-number {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Mechanic & Date */
+.jc-mechanic-cell {
+  color: var(--text-main);
+  font-weight: 400;
+}
+
+.jc-date-cell {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Badges */
+.jc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.jc-badge-received {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.jc-badge-inspection {
+  background-color: var(--status-inspection);
+  color: var(--status-inspection-text);
+}
+
+.jc-badge-repairing {
+  background-color: var(--status-repairing);
+  color: var(--status-repairing-text);
+}
+
+.jc-badge-quality {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.jc-badge-ready {
+  background-color: var(--status-ready);
+  color: var(--status-ready-text);
+}
+
+/* Action button */
+.jc-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.jc-action-btn:hover {
+  background-color: var(--bg-main);
+  color: var(--primary-blue);
+}
+
+/* Empty state */
+.jc-empty {
+  text-align: center;
+  padding: 3rem 1rem !important;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ===== Create Job Modal ===== */
+.jc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.jc-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  width: 600px;
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: jcModalIn 0.2s ease;
+}
+
+@keyframes jcModalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.jc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.jc-modal-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.jc-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.jc-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.jc-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.jc-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
