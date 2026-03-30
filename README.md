@@ -10,105 +10,76 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="JWT" />
-  <img src="https://img.shields.io/badge/License-Hackathon%202026-FF6B6B?style=for-the-badge" alt="License" />
+  <a href="https://www.linkedin.com/posts/yuvraj-dhadhal-876a57356_hackathon-ai-fullstackdevelopment-ugcPost-7444029092368150528-i1mM?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFjJ4RoBh8Yw-uG2eBXggJaXKbzA1eDoUmY" target="_blank">
+    <img src="https://img.shields.io/badge/🎥%20View%20Demo%20Video-LinkedIn-blue?style=for-the-badge&logo=linkedin" />
+  </a>
 </p>
 
----
-
-## 📑 Table of Contents
-
-- [✨ Overview](#-overview)
-- [🎯 Problem Statement](#-problem-statement)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [📂 Project Structure](#-project-structure)
-- [🚀 Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Setup the Backend Server](#2-setup-the-backend-server)
-  - [3. Setup the Frontend Client](#3-setup-the-frontend-client)
-  - [4. Seed the Database](#4-seed-the-database)
-  - [5. Access the Application](#5-access-the-application)
-- [🔑 Environment Variables](#-environment-variables)
-- [🗺️ Application Routes](#️-application-routes)
-- [🧩 Features by Role](#-features-by-role)
-- [🔌 API Endpoints](#-api-endpoints)
-- [📊 Database Models](#-database-models)
-- [🏗️ Architecture Overview](#️-architecture-overview)
-- [🎨 Design System](#-design-system)
-- [🧪 Demo Credentials](#-demo-credentials)
-- [🖼️ Screenshots](#️-screenshots)
-- [👥 Team](#-team)
-- [📜 License](#-license)
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
+  <img src="https://img.shields.io/badge/Hackathon-2026-FF6B6B?style=for-the-badge" />
+</p>
 
 ---
 
 ## ✨ Overview
 
-**Servixo** is a comprehensive vehicle service management platform designed to digitize and streamline the operations of automobile service centers. It replaces traditional pen-and-paper job tracking with a modern, real-time web interface accessible to all stakeholders — from the service center admin to the customer waiting for their car.
+**Servixo** is a next-generation vehicle service management platform designed to digitize and automate service center workflows.
 
-### 🔥 Key Highlights
-
-| Feature | Description |
-|---------|-------------|
-| 🔄 **Real-Time Tracking** | Customers can track their vehicle's repair status through a 7-step progress pipeline |
-| 📋 **Digital Job Cards** | Create, assign, and manage job cards with full vehicle and customer details |
-| 🔧 **Mechanic Workspace** | Dedicated interface for mechanics to update progress, add notes, and submit bills |
-| 💰 **Billing & Invoicing** | Itemized bill generation with PDF download and online payment support |
-| 🔐 **Role-Based Access** | JWT-authenticated routes with admin and mechanic roles |
-| 📊 **Reports & Analytics** | Visual reports on revenue, job volume, and service trends |
-| ⚙️ **Admin Settings** | Configurable system settings with centralized management |
+It eliminates manual tracking and introduces **real-time visibility**, **role-based control**, and **automated billing systems**.
 
 ---
 
-## 🎯 Problem Statement
+## 🎯 Why Servixo?
 
-Traditional vehicle service centers suffer from:
+Traditional service centers suffer from:
 
-> ❌ **No transparency** — Customers blindly wait without knowing repair progress  
-> ❌ **Paper-based tracking** — Job cards get lost, mismanaged, or forgotten  
-> ❌ **Communication gaps** — Mechanics, admins, and customers are disconnected  
-> ❌ **Billing disputes** — No standardized, itemized digital bills  
+- ❌ No transparency  
+- ❌ Paper-based job tracking  
+- ❌ Poor communication  
+- ❌ Billing confusion  
 
-**Servixo** eliminates all of these problems with a unified digital platform:
+### ✅ Servixo Solves It:
 
-> ✅ Customers track repairs in real-time via a public landing page  
-> ✅ Admins manage all jobs, mechanics, and billing from a single dashboard  
-> ✅ Mechanics update progress step-by-step through their own workspace  
-> ✅ Bills are generated digitally with PDF export and admin approval  
+- Real-time job tracking for customers  
+- Fully digital job card system  
+- Dedicated dashboards for admin & mechanics  
+- Automated billing with invoice generation  
+
+---
+
+## 🔥 Key Features
+
+- 🚀 Real-time vehicle tracking (7-stage pipeline)
+- 📋 Smart digital job cards
+- 🔧 Mechanic dashboard with updates
+- 💰 Automated billing system (PDF support)
+- 🔐 Secure JWT authentication
+- 📊 Admin analytics & reports
+- ⚙️ Centralized system settings
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **React** | 19.2 | UI library with Hooks & Context API |
-| **Vite** | 8.0 | Lightning-fast dev server & bundler |
-| **React Router DOM** | 7.13 | Client-side routing with protected routes |
-| **Lucide React** | 1.7 | Beautiful, consistent icon library |
-| **jsPDF** | 2.5 | Client-side PDF bill generation |
-| **Vanilla CSS** | — | Custom design system with CSS variables |
+- React 19 + Vite
+- React Router DOM
+- Context API
+- jsPDF
+- Vanilla CSS
 
 ### Backend
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **Node.js** | 18+ | JavaScript runtime |
-| **Express** | 4.21 | RESTful API framework |
-| **MongoDB Atlas** | — | Cloud NoSQL database |
-| **Mongoose** | 8.9 | MongoDB ODM with schema validation |
-| **JWT** | 9.0 | Stateless authentication tokens |
-| **bcryptjs** | 2.4 | Secure password hashing |
-| **dotenv** | 16.4 | Environment variable management |
-| **nodemon** | 3.1 | Auto-restart dev server on changes |
-| **CORS** | 2.8 | Cross-origin request handling |
+- Node.js + Express
+- MongoDB Atlas
+- Mongoose ODM
+- JWT Authentication
+- bcryptjs
 
----
 
 ## 📂 Project Structure
 
